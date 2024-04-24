@@ -1,184 +1,198 @@
 # **********************************************************************************************************************
-#   SFELDomeController: Controller application for SFEL station dome.
+#    LibZMQUtils (ZeroMQ High Level Utilities C++ Library).
 #
-#   Copyright (C) 2023 Degoras Project Team
-#                      < Ángel Vera Herrera, avera@roa.es - angeldelaveracruz@gmail.com >
-#                      < Jesús Relinque Madroñal >
+#    ExamplesLibDegorasSLR related project.
 #
-#   This file is part of SFELDomeController.
+#    A modern open-source C++ library with high level utilities based on the well-known ZeroMQ open-source universal
+#    messaging library. Includes custom command based server-client and publisher-subscriber with automatic binary
+#    serialization capabilities, specially designed for system infraestructure. Developed as a free software under the
+#    context of Degoras Project for the Spanish Navy Observatory SLR station (SFEL) in San Fernando and, of course,
+#    for any other station that wants to use it!
 #
-#   Licensed under the European Union Public License (EUPL), Version 1.2 or subsequent versions of the EUPL license
-#   as soon they will be approved by the European Commission (IDABC).
+#    Copyright (C) 2024 Degoras Project Team
+#                       < Ángel Vera Herrera, avera@roa.es - angeldelaveracruz@gmail.com >
+#                       < Jesús Relinque Madroñal >
 #
-#   This project is free software: you can redistribute it and/or modify it under the terms of the EUPL license as
-#   published by the IDABC, either Version 1.2 or, at your option, any later version.
+#    This file is part of LibZMQUtils.
 #
-#   This project is distributed in the hope that it will be useful. Unless required by applicable law or agreed to in
-#   writing, it is distributed on an "AS IS" basis, WITHOUT ANY WARRANTY OR CONDITIONS OF ANY KIND; without even the
-#   implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the EUPL license to check specific
-#   language governing permissions and limitations and more details.
+#    Licensed under the European Union Public License (EUPL), Version 1.2 or subsequent versions of the EUPL license
+#    as soon they will be approved by the European Commission (IDABC).
 #
-#   You should use this project in compliance with the EUPL license. You should have received a copy of the license
-#   along with this project. If not, see the license at < https://eupl.eu/ >.
+#    This project is free software: you can redistribute it and/or modify it under the terms of the EUPL license as
+#    published by the IDABC, either Version 1.2 or, at your option, any later version.
+#
+#    This project is distributed in the hope that it will be useful. Unless required by applicable law or agreed to in
+#    writing, it is distributed on an "AS IS" basis, WITHOUT ANY WARRANTY OR CONDITIONS OF ANY KIND; without even the
+#    implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the EUPL license to check specific
+#    language governing permissions and limitations and more details.
+#
+#    You should use this project in compliance with the EUPL license. You should have received a copy of the license
+#    along with this project. If not, see the license at < https://eupl.eu/ >.
 # **********************************************************************************************************************
 
 # **********************************************************************************************************************
-# Updated 27/09/2023
+# Updated 22/04/2024
 # **********************************************************************************************************************
 
-# Cmake minimum.
+# **********************************************************************************************************************
+# LIBZMQUTILS EXAMPLES MAIN PROJECT CMAKELIST
+# **********************************************************************************************************************
+
+# ----------------------------------------------------------------------------------------------------------------------
+# INITIALIZATION
+
+# Cmake minimum and empty project for avoid warnings.
 cmake_minimum_required(VERSION 3.21)
+project(_)
 
-# Check version.
-if (NOT ${CMAKE_VERSION} VERSION_LESS "3.1.0")
-    cmake_policy(SET CMP0054 NEW)
-endif()
+# Set path to additional CMake modules.
+set(CMAKE_MODULE_PATH
+    ${CMAKE_SOURCE_DIR}/CMakeModules ${CMAKE_MODULE_PATH}
+    ${CMAKE_SOURCE_DIR}/CMakeLibsConfig ${CMAKE_MODULE_PATH})
 
-#Configure the build type.
-if(NOT CMAKE_BUILD_TYPE)
-    set(CMAKE_BUILD_TYPE Debug)
-endif()
+# Init CMake modules.
+include(CMakeMacrosGlobals)
+macro_cmakemodules_init("24.04.22")
 
-# Library names.
-set(FULL_NAME SFELDomeController)
-set(APP_NAME ${FULL_NAME})
+# ----------------------------------------------------------------------------------------------------------------------
+# BASIC PROJECT CONFIGURATION
 
-# Project name.
-project(${APP_NAME})
+# Base project configuration.
+set(PROJ_NAME SFELDomeController)
+set(PROJ_VER 0.0.1)
+set(PROJ_BUILD_MODE Debug)
+set(PROJ_INSTALL_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../${PROJ_NAME}_product_v${PROJ_VER})
+set(PROJ_LANGUAGES CXX C)
 
-# Check the architecture.
-if(CMAKE_SIZEOF_VOID_P EQUAL 4)
-    message(FATAL_ERROR "Architecture not supported by default.")
-endif()
+# Libraries configuration.
+set(LIB_CONTROLLER_NAME LibSFELDomeController)
+set(LIB_CONTROLLER_VER 0.0.1)
+set(LIB_CLIENT_NAME LibSFELDomeClient)
+set(LIB_CLIENT_VER 0.0.1)
 
-# Set path to additional CMake modules
-set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/CMakeModules ${CMAKE_MODULE_PATH})
-include(CMakeMacros)
 
-# Set the version.
-set(MAJOR_VERSION 1)
-set(MINOR_VERSION 0)
-set(PATCH_VERSION 1)
-set(VERSION ${MAJOR_VERSION}.${MINOR_VERSION}.${PATCH_VERSION})
 
-# Output directories.
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
-# Other variables setting.
+# Macros global configuration.
+macro_global_set_show_externals(TRUE)
+macro_global_set_force_install_dir(TRUE)
+macro_global_set_install_runtime_deps(TRUE)
+macro_global_set_install_runtime_artifacts(TRUE)
+macro_global_set_exclude_so_libraries(TRUE)
+
+# Setup the base project.
+macro_setup_base_project(${PROJ_NAME} ${PROJ_VER} ${PROJ_BUILD_MODE} ${PROJ_LANGUAGES})
+
+# Other configurations.
 set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_COLOR_MAKEFILE ON)
-set(CMAKE_SHARED_LIBRARY_PREFIX "")
-set(SHOW_EXTERNALS TRUE)
 
-# Define the install directory for each compiler and operating system.
-macro_prepare_install_dir(INSTALL_BIN INSTALL_LIB ${CMAKE_CURRENT_SOURCE_DIR}/../product)
+# Setup the install directory for each compiler and operating system.
+macro_setup_default_install_dir(${PROJ_INSTALL_DIR})
 
-# Includes.
-include_directories(${CMAKE_SOURCE_DIR}/includes)
-include_directories(${ZMQ_DIR}/includes)
+# Set the installation example path.
+#set(GLOBAL_LIBZMQUTILS_EXAMPLES_INSTALL_PATH ${MODULES_GLOBAL_INSTALL_BIN_PATH})
 
+# ----------------------------------------------------------------------------------------------------------------------
+# SPECIFIC PROJECT CONFIGURATION
+
+# WARNING QT CREATOR BUG
+set(AVOID_QTCREATOR13_DLL_SEARCH_BUG FALSE)
+
+# Specific configuration.
+set(CMAKE_FIND_PACKAGE_PREFER_CONFIG TRUE)
+set(LIB_INCLUDES_DIR ${CMAKE_CURRENT_SOURCE_DIR}/includes/)
+set(LIB_SOURCES_DIR ${CMAKE_SOURCE_DIR}/sources)
+
+# Configure the LibZMQUtils package.
+include(ConfigLibZMQUtils)
+macro_configure_libzmqutils_default("1.6.6" EXACT "" "")
+
+# Add external libraries location paths to global scope.
+macro_global_add_libs_full_paths("${LibZMQUtils_LOCATION}" "${LibZMQUtils_LOCATION_DEPENDENCIES}")
+macro_global_add_libs_folders("${LibZMQUtils_LOCATION_DIR}" "${LibZMQUtils_LOCATION_DEPENDENCIES_DIR}")
+
+# Add the LibZMQUtils to global link variable.
+macro_global_add_libs_auto(${LibZMQUtils_LOCATION})
+
+# LIBRERIA SERIE????
+
+# ----------------------------------------------------------------------------------------------------------------------
+# LIBSFELDOMECONTROLLER LIBRARY SETUP
 
 # Get the headers, sources and template files.
-file(GLOB_RECURSE HEADERS ${CMAKE_SOURCE_DIR}/*.h)
-file(GLOB_RECURSE TEMPLTS ${CMAKE_SOURCE_DIR}/*.tpp)
-file(GLOB_RECURSE SOURCES ${CMAKE_SOURCE_DIR}/*.cpp)
+file(GLOB_RECURSE HEADERS ${CMAKE_SOURCE_DIR}/includes/${LIB_CONTROLLER_NAME}/*.h)
+file(GLOB_RECURSE TEMPLTS ${CMAKE_SOURCE_DIR}/includes/${LIB_CONTROLLER_NAME}/*.tpp)
+file(GLOB_RECURSE INL ${CMAKE_SOURCE_DIR}/includes/${LIB_CONTROLLER_NAME}/*.inl)
+file(GLOB_RECURSE SOURCES1 ${CMAKE_SOURCE_DIR}/sources/DomeController/*.cpp)
+file(GLOB_RECURSE SOURCES2 ${CMAKE_SOURCE_DIR}/sources/DomeControllerServer/*.cpp)
 
+# Module alias files.
+macro_get_files_without_extension(ALIAS ${CMAKE_SOURCE_DIR}/includes/${LIB_CONTROLLER_NAME}/*)
 
-# Get the include aliases files.
-macro_get_files_without_extension(ALIAS ${CMAKE_SOURCE_DIR}/includes/${FULL_NAME}/*)
-
-# Create a custom group for the templates, aliases and externals.
+# Create a custom group for the templates and aliases.
+source_group("Header Files" FILES ${TEMPLTS})
 source_group("Alias Files" FILES ${ALIAS})
-source_group("Header Files" FILES ${HEADERS})
-source_group("External Libs" FILES ${EXTERN})
 
-# Add definitions and the library.
-string(TOUPPER ${FULL_NAME} FULL_NAME_UPPER)
+# Setup the shared library.
+macro_setup_shared_lib("${LIB_CONTROLLER_NAME}" "${LIB_INCLUDES_DIR}" "${LIB_CONTROLLER_VER}"
+                        ${SOURCES1} ${SOURCES2} ${HEADERS} ${TEMPLTS} ${INL} ${ALIAS})
 
-add_executable(${APP_NAME} ${SOURCES})
+# Link with LibZMQUtils
+macro_link_libzmqutils_default(${LIB_CONTROLLER_NAME} PUBLIC)
 
+
+# LINK CON ZMQ
+# LINK CON SERIAL (SI NO ES HEADER)
+
+# ----------------------------------------------------------------------------------------------------------------------
+# LIBSFELDOMECLIENT LIBRARY SETUP
+
+# Get the headers, sources and template files.
+file(GLOB_RECURSE HEADERS ${CMAKE_SOURCE_DIR}/includes/${LIB_CLIENT_NAME}/*.h)
+file(GLOB_RECURSE TEMPLTS ${CMAKE_SOURCE_DIR}/includes/${LIB_CLIENT_NAME}/*.tpp)
+file(GLOB_RECURSE INL ${CMAKE_SOURCE_DIR}/includes/${LIB_CLIENT_NAME}/*.inl)
+file(GLOB_RECURSE SOURCES1 ${CMAKE_SOURCE_DIR}/sources/DomeControllerClient/*.cpp)
+
+# Module alias files.
+macro_get_files_without_extension(ALIAS ${CMAKE_SOURCE_DIR}/includes/${LIB_CLIENT_NAME}/*)
+
+# Create a custom group for the templates and aliases.
+source_group("Header Files" FILES ${TEMPLTS})
+source_group("Alias Files" FILES ${ALIAS})
+
+# Setup the shared library.
+macro_setup_shared_lib("${LIB_CLIENT_NAME}" "${LIB_INCLUDES_DIR}" "${LIB_CLIENT_VER}"
+                        ${SOURCES1} ${HEADERS} ${TEMPLTS} ${INL} ${ALIAS})
+
+# Link with LibZMQUtils
+macro_link_libzmqutils_default(${LIB_CLIENT_NAME} PUBLIC)
+
+# ----------------------------------------------------------------------------------------------------------------------
+# CONFIGURE THE COMPILERS
 
 # Configure the compilers.
 if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
-    set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -std=c++17 -pthread -O3 -fopenmp")
-elseif(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
-    target_compile_options(${FULL_NAME} PRIVATE /std:c++17 /openmp)
+    if (CMAKE_BUILD_TYPE STREQUAL "Debug")
+        set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -Wpedantic -Wall -Wextra -O0 -fopenmp")
+    else()
+        set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -pedantic -Wall -Wextra -m64 -O3 -pthread -fopenmp")
+    endif()
 else()
     message(FATAL_ERROR "Compiler not supported by default.")
 endif()
 
-# In mingw better do static linking of the libgcc, libwinpthread and libstd.
-if (MINGW)
-    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -static-libgcc -static-libstdc++ -static -lpthread")
-    target_link_libraries(${FULL_NAME} PRIVATE -static-libgcc -static-libstdc++ -static -lpthread)
-endif()
+# ----------------------------------------------------------------------------------------------------------------------
+# INSTALLATION PROCESS
 
-# Link libraries. For win32 only.
+# External libs locations.
+#set(ext_libs_loc ${LibZMQUtils_LOCATION_DEPENDENCIES_DIR} ${LibZMQUtils_LOCATION_DIR})
 
-# Instalation common
-# Install the include files of LibZMQUtils.
-install(DIRECTORY ${CMAKE_SOURCE_DIR}/includes/${FULL_NAME}
-        DESTINATION ${CMAKE_INSTALL_PREFIX}/includes
-        PATTERN "*.txt" EXCLUDE)
+# ----------------------------------------------------------------------------------------------------------------------
+# SETUP THE TESTS AND APPLICATIONS
 
-# Install the include files of ZMQ.
-install(DIRECTORY ${ZMQ_DIR}/includes/zmq
-        DESTINATION ${CMAKE_INSTALL_PREFIX}/includes)
-
-# Install the binaries  of LibZMQUtils to the specified install directory.
-install(TARGETS ${FULL_NAME}
-        LIBRARY DESTINATION ${INSTALL_LIB}
-        RUNTIME DESTINATION ${INSTALL_LIB})
-
-
-# Runtime artifacts.
-install(IMPORTED_RUNTIME_ARTIFACTS ${FULL_NAME}
-        RUNTIME_DEPENDENCY_SET ${LIB_DEPS_SET}
-        DESTINATION ${INSTALL_BIN})
-
-
-# Installation process for windows.
-if(WIN32)
-
-    # Install the binaries of ZMQ to the specified install directory.
-    install(DIRECTORY ${ZMQ_LIBS_DIR}/
-            DESTINATION ${INSTALL_LIB}
-            FILES_MATCHING PATTERN "*.dll")
-
-    # Install the lib files for msvc.
-    if(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
-
-        # ZMQ libs
-        install(DIRECTORY ${ZMQ_LIBS_DIR}/
-                DESTINATION ${INSTALL_LIB}
-                FILES_MATCHING PATTERN "*.lib")
-
-        # Install the LibZMQUtils.lib file to the specified library directory.
-        install(FILES ${CMAKE_ARCHIVE_OUTPUT_DIRECTORY}/${FULL_NAME}.lib
-                DESTINATION ${INSTALL_LIB})
-
-    endif()
-
-    # Install the external dependencies.
-    install(RUNTIME_DEPENDENCY_SET ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
-            PRE_EXCLUDE_REGEXES "api-ms-" "ext-ms-"
-            DIRECTORIES ${ZMQ_LIBS_DIR} ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
-            DESTINATION ${INSTALL_BIN})
-
-elseif(UNIX)
-    # Install the libraries of ZMQ to the specified install directory.
-    install(DIRECTORY ${ZMQ_LIBS_DIR}/
-            DESTINATION ${INSTALL_LIB}
-            FILES_MATCHING PATTERN "*.so")
-
-
-    install(DIRECTORY ${ZMQ_LIBS_DIR}/
-            DESTINATION ${INSTALL_LIB}
-            FILES_MATCHING PATTERN "*.a")
-
-endif()
-
-# Enable testing.
-enable_testing()
+add_subdirectory(testing)
+#add_subdirectory(CommandServerClient)
 
 # **********************************************************************************************************************
+
+
