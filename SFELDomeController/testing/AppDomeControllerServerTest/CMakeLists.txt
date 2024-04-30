@@ -6,7 +6,7 @@
 # CONFIGURATION
 
 # Config.
-set(APP_NAME AppDomeControllerTest)
+set(APP_NAME AppDomeControllerServerTest)
 # --
 set(TEST_DIR ${APP_NAME})
 set(EXAMPLE_FULL_NAME ${APP_NAME})

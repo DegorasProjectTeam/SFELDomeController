@@ -13,5 +13,7 @@ set(GLOBAL_LIBSFELDOMECONTROLLER_TESTS_INSTALL_PATH ${MODULES_GLOBAL_INSTALL_BIN
 
 # Add all the Modules.
 add_subdirectory(AppDomeControllerTest)
+add_subdirectory(AppDomeControllerServerTest)
+add_subdirectory(AppDomeControllerClientTest)
 
 # **********************************************************************************************************************

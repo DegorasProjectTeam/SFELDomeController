@@ -33,11 +33,11 @@ namespace sfeldome{
 namespace controller{
 // =====================================================================================================================
 
-class  DomeController
+class LIBDOMECONTROLLER_EXPORT DomeController
 {
 public:
 
-    DomeController();
+    DomeController(){}
 
     DomeError setHomePosition(const AltAzPos& pos);
 

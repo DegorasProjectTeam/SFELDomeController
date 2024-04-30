@@ -1,0 +1,2 @@
+#include <LibSFELDomeController/DomeControllerServer/dome_controller_server.h>
+#include <LibSFELDomeController/DomeControllerServer/dome_controller_server_data.h>

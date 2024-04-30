@@ -40,14 +40,10 @@
 #include <sstream>
 // =====================================================================================================================
 
-// ZMQUTILS INCLUDES
+// EXTERNAL INCLUDES
 // =====================================================================================================================
-#include <LibZMQUtils/Utils>
-// =====================================================================================================================
-
-// AMELAS INTERFACE INCLUDES
-// =====================================================================================================================
-#include <AmelasServerInterface>
+#include <LibZMQUtils/Modules/Utilities>
+#include <LibSFELDomeController/Modules/DomeControllerServer>
 // =====================================================================================================================
 
 /**
@@ -60,6 +56,73 @@
  */
 int main(int, char**)
 {
+    // Nampesaces.
+    using sfeldome::communication::DomeControllerServer;
+    using sfeldome::communication::DomeServerCommand;
+    using sfeldome::controller::DomeController;
+
+    // -------------------------------------------------------------------
+
+    // Configure the console.
+    zmqutils::utils::ConsoleConfig& console_cfg = zmqutils::utils::ConsoleConfig::getInstance();
+    console_cfg.configureConsole(true, true, false);
+
+    // Configuration variables.
+    unsigned port = 9999;
+    bool client_status_check = true;
+
+    // Instantiate the Dome controller.
+    DomeController dome_controller;
+
+    // Instantiate the server.
+    DomeControllerServer dome_server(port);
+
+    // Disable or enables the client status checking.
+    dome_server.setClientStatusCheck(client_status_check);
+
+    // -------------------------------------------------------------------
+
+    // Set the controller callbacks in the server.
+
+    dome_server.registerControllerCallback(DomeServerCommand::REQ_SET_HOME_POSITION,
+                                             &dome_controller,
+                                             &DomeController::setHomePosition);
+
+    dome_server.registerControllerCallback(DomeServerCommand::REQ_GET_HOME_POSITION,
+                                             &dome_controller,
+                                             &DomeController::getHomePosition);
+
+    // -------------------------------------------------------------------
+
+    // Start the server.
+    bool started = dome_server.startServer();
+
+    // Check if the server starts ok.
+    if(!started)
+    {
+        // Log.
+        std::cout << "Server start failed!! Press Enter to exit!" << std::endl;
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+        std::cin.clear();
+        return 1;
+    }
+
+    // Wait for closing as an infinite loop until ctrl-c.
+    console_cfg.waitForClose();
+
+    // Log.
+    std::cout << "Stopping the server..." << std::endl;
+
+    // Stop the server.
+    dome_server.stopServer();
+
+    // Final log.
+    std::cout << "Server stoped. All ok!!" << std::endl;
+
+    // Restore the console.
+    console_cfg.restoreConsole();
+
+    // Return.
 	return 0;
 }
 
