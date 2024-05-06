@@ -70,8 +70,12 @@ set(LIB_CONTROLLER_VER 0.0.1)
 set(LIB_CLIENT_NAME LibSFELDomeClient)
 set(LIB_CLIENT_VER 0.0.1)
 
+# Build target selector.
+# TODO
+set(BUILD_CONTROLLER TRUE)
+
 # Macros global configuration.
-macro_global_set_show_externals(FALSE)
+macro_global_set_show_externals(TRUE)
 macro_global_set_force_install_dir(TRUE)
 macro_global_set_install_runtime_deps(TRUE)
 macro_global_set_install_runtime_artifacts(TRUE)
@@ -102,10 +106,7 @@ set(LIB_SOURCES_DIR ${CMAKE_SOURCE_DIR}/sources)
 
 # Configure the LibZMQUtils package.
 include(ConfigLibZMQUtils)
-macro_configure_libzmqutils_default("1.7.4" EXACT "" "")
-
-# Find CxxSerial package.
-find_package(serial REQUIRED)
+macro_configure_libzmqutils_default("1.7.5" EXACT "" "")
 
 # Add external libraries location paths to global scope.
 macro_global_add_libs_full_paths("${LibZMQUtils_LOCATION}" "${LibZMQUtils_LOCATION_DEPENDENCIES}")
@@ -113,6 +114,9 @@ macro_global_add_libs_folders("${LibZMQUtils_LOCATION_DIR}" "${LibZMQUtils_LOCAT
 
 # Add the LibZMQUtils to global link variable.
 macro_global_add_libs_auto(${LibZMQUtils_LOCATION})
+
+# Find CxxSerial package.
+find_package(LibSerial REQUIRED)
 
 # ----------------------------------------------------------------------------------------------------------------------
 # LIBSFELDOMECONTROLLER LIBRARY SETUP
@@ -136,9 +140,9 @@ macro_setup_shared_lib("${LIB_CONTROLLER_NAME}" "${LIB_INCLUDES_DIR}" "${LIB_CON
                         ${SOURCES1} ${SOURCES2} ${HEADERS} ${TEMPLTS} ${INL} ${ALIAS})
 
 # Link with LibZMQUtils and TODO SERIAL LIB.
-target_link_libraries(${LIB_CONTROLLER_NAME} PUBLIC LibZMQUtils::LibZMQUtils)
+target_link_libraries(${LIB_CONTROLLER_NAME} PUBLIC LibZMQUtils::LibZMQUtils ${LIBSERIAL_LIBRARIES})
 
-target_include_directories(${LIB_CONTROLLER_NAME} INTERFACE ${SERIAL_INCLUDE_DIRS})
+target_include_directories(${LIB_CONTROLLER_NAME} PUBLIC ${LIBSERIAL_INCLUDE_DIRS})
 
 if(MODULES_GLOBAL_SHOW_EXTERNALS)
 
@@ -148,8 +152,7 @@ if(MODULES_GLOBAL_SHOW_EXTERNALS)
     target_sources(${LIB_CONTROLLER_NAME} PUBLIC ${EXTERNAL_HEADERS})
 
     # CXXSerial
-    file(GLOB_RECURSE EXTERNAL_HEADERS ${SERIAL_INCLUDE_DIRS}/*)
-    target_sources(${LIB_CONTROLLER_NAME} PUBLIC ${EXTERNAL_HEADERS})
+    target_sources(${LIB_CONTROLLER_NAME} PUBLIC ${LIBSERIAL_INCLUDES})
 
 
 endif()
