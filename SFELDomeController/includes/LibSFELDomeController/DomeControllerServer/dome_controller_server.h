@@ -72,43 +72,12 @@ public:
 
     DomeControllerServer(unsigned port, const std::string& local_addr = "*");
 
-    // Register callback function helper.
-    template<typename... Args>
-    void registerControllerCallback(DomeServerCommand command,
-                                    controller::DomeController* object,
-                                    controller::DomeControllerCallback<Args...> callback)
-    {
-        CallbackHandler::registerCallback(static_cast<CallbackHandler::CallbackId>(command), object, callback);
-    }
-
 private:
 
     // -----------------------------------------------------------------------------------------------------------------
     using CommandServerBase::registerRequestProcFunc;
-    using CallbackHandler::registerCallback;
+    using ClbkCommandServerBase::registerCallback;
     // -----------------------------------------------------------------------------------------------------------------
-
-    // -----------------------------------------------------------------------------------------------------------------
-    using DomeRequestProcFunc = void(DomeControllerServer::*)(const zmqutils::serverclient::CommandRequest&, zmqutils::serverclient::CommandReply&);
-    // -----------------------------------------------------------------------------------------------------------------
-
-    // Process functions for all the specific commands.
-    void processSetHomePosition(const zmqutils::serverclient::CommandRequest&, zmqutils::serverclient::CommandReply&);
-    void processGetHomePosition(const zmqutils::serverclient::CommandRequest&, zmqutils::serverclient::CommandReply&);
-    // Etc
-
-    // Subclass register process function helper.
-    void registerRequestProcFunc(DomeServerCommand command, DomeRequestProcFunc func);
-
-    // Subclass invoke callback helper.
-    template <typename ClbkT, typename... Args>
-    controller::DomeError invokeCallback(const zmqutils::serverclient::CommandRequest& request,
-                                         zmqutils::serverclient::CommandReply& reply, Args&&... args)
-    {
-        return ClbkCommandServerBase::invokeCallback<ClbkT>(request, reply,
-                                                            controller::DomeError::INVALID_ERROR,
-                                                            std::forward<Args>(args)...);
-    }
 
     // Internal overrided command validation function.
     virtual bool validateCustomCommand(zmqutils::serverclient::ServerCommand command) final;

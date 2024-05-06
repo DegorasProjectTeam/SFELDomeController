@@ -35,8 +35,6 @@ namespace sfeldome{
 namespace controller{
 // =====================================================================================================================
 
-class DomeController;
-
 enum class DomeError : std::int32_t
 {
     INVALID_ERROR = -1,
@@ -71,14 +69,6 @@ struct LIBDOMECONTROLLER_EXPORT AltAzPos final : public zmqutils::serializer::Se
     double az;
     double el;
 };
-
-// Generic callback.
-template<typename... Args>
-using DomeControllerCallback = DomeError(DomeController::*)(Args...);
-
-// Callback function type aliases
-using SetHomePositionCallback = std::function<DomeError(const AltAzPos&)>;
-using GetHomePositionCallback = std::function<DomeError(AltAzPos&)>;
 
 // =====================================================================================================================
 

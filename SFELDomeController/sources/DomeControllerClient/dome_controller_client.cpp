@@ -1,0 +1,170 @@
+
+
+// PROJECT INCLUDES
+// =====================================================================================================================
+#include "LibSFELDomeClient/DomeControllerClient/dome_controller_client.h"
+// =====================================================================================================================
+
+// AMELAS NAMESPACES
+// =====================================================================================================================
+namespace sfeldome{
+namespace communication{
+// =====================================================================================================================
+
+// ---------------------------------------------------------------------------------------------------------------------
+using zmqutils::serverclient::ServerCommand;
+using zmqutils::serverclient::OperationResult;
+using zmqutils::serverclient::ResultType;
+using zmqutils::serverclient::CommandType;
+using zmqutils::serverclient::CommandReply;
+using zmqutils::serverclient::RequestData;
+using zmqutils::serializer::BinarySerializer;
+// ---------------------------------------------------------------------------------------------------------------------
+
+DomeControllerClient::DomeControllerClient(const std::string& server_endpoint,
+                                           const std::string& client_name,
+                                           const std::string interf_name) :
+    zmqutils::serverclient::CommandClientBase(server_endpoint, client_name, interf_name)
+{}
+
+
+OperationResult DomeControllerClient::getHomePosition(controller::AltAzPos &pos, controller::DomeError &res)
+{
+    RequestData request = this->prepareRequest(DomeServerCommand::REQ_GET_HOME_POSITION);
+    return this->executeCommand(request, res, pos);
+}
+
+OperationResult DomeControllerClient::setHomePosition(const controller::AltAzPos &pos,
+                                                      controller::DomeError &res)
+{
+    RequestData request = this->prepareRequest(DomeServerCommand::REQ_SET_HOME_POSITION, pos);
+    return this->executeCommand(request, res);
+}
+
+OperationResult DomeControllerClient::openSerialPort(const std::string& serial_port, controller::DomeError &res)
+{
+    RequestData request = this->prepareRequest(DomeServerCommand::REQ_OPEN_SERIAL_PORT, serial_port);
+    return this->executeCommand(request, res);
+}
+
+void DomeControllerClient::onClientStart()
+{
+    // Log.
+    std::cout << std::string(100, '-') << std::endl;
+    std::cout<<"<"<<this->getClientName()<<">"<<std::endl;
+    std::cout<<"-> ON CLIENT START: "<<std::endl;
+    std::cout<<"Time: "<<zmqutils::utils::currentISO8601Date()<<std::endl;
+    std::cout<<"Endpoint: "<<this->getServerEndpoint()<<std::endl;
+    std::cout<<"Name: "<<this->getClientInfo().name<<std::endl;
+    std::cout<<"UUID: "<<this->getClientInfo().uuid.toRFC4122String()<<std::endl;
+    std::cout<<"Ip: "<<this->getClientInfo().ip<<std::endl;
+    std::cout<<"Pid: "<<this->getClientInfo().pid<<std::endl;
+    std::cout<<"Hostname: "<<this->getClientInfo().hostname<<std::endl;
+    std::cout << std::string(100, '-') << std::endl;
+}
+
+void DomeControllerClient::onClientStop()
+{
+    // Log.
+    std::cout << std::string(100, '-') << std::endl;
+    std::cout<<"<"<<this->getClientName()<<">"<<std::endl;
+    std::cout<<"-> ON CLIENT STOP: "<<std::endl;
+    std::cout<<"Time: "<<zmqutils::utils::currentISO8601Date()<<std::endl;
+    std::cout << std::string(100, '-') << std::endl;
+}
+
+void DomeControllerClient::onWaitingReply()
+{
+    // Log.
+    std::cout << std::string(100, '-') << std::endl;
+    std::cout<<"<"<<this->getClientName()<<">"<<std::endl;
+    std::cout<<"-> ON WAITING REPLY: "<<std::endl;
+    std::cout<<"Time: "<<zmqutils::utils::currentISO8601Date()<<std::endl;
+    std::cout << std::string(100, '-') << std::endl;
+}
+
+void DomeControllerClient::onDeadServer()
+{
+    // Log.
+    std::cout << std::string(100, '-') << std::endl;
+    std::cout<<"<"<<this->getClientName()<<">"<<std::endl;
+    std::cout<<"-> ON DEAD SERVER: "<<std::endl;
+    std::cout<<"Time: "<<zmqutils::utils::currentISO8601Date()<<std::endl;
+    std::cout << std::string(100, '-') << std::endl;
+}
+
+void DomeControllerClient::onConnected()
+{
+    // TODO In base get server info when connected.
+    // Log.
+    std::cout << std::string(100, '-') << std::endl;
+    std::cout<<"<"<<this->getClientName()<<">"<<std::endl;
+    std::cout<<"-> ON CONNECTED: "<<std::endl;
+    std::cout<<"Time: "<<zmqutils::utils::currentISO8601Date()<<std::endl;
+    std::cout<<"Endpoint: "<<this->getServerEndpoint()<<std::endl;
+    std::cout<<"Server Name: "<<std::endl;
+    std::cout<<"Server Version: "<<std::endl;
+    std::cout<<"Server Info: "<<std::endl;
+    std::cout << std::string(100, '-') << std::endl;
+}
+
+void DomeControllerClient::onDisconnected()
+{
+    // Log.
+    std::cout << std::string(100, '-') << std::endl;
+    std::cout<<"<"<<this->getClientName()<<">"<<std::endl;
+    std::cout<<"-> ON DISCONNECTED: "<<std::endl;
+    std::cout<<"Time: "<<zmqutils::utils::currentISO8601Date()<<std::endl;
+    std::cout << std::string(100, '-') << std::endl;
+}
+
+void DomeControllerClient::onReplyReceived(const CommandReply &reply)
+{
+    // Auxiliar.
+    BinarySerializer serializer(reply.params.get(), reply.params_size);
+    ResultType result = static_cast<ResultType>(reply.server_result);
+    std::string res_str = zmqutils::utils::getEnumString(reply.server_result, DomeOperationResultStr);
+    // Log.
+    std::cout << std::string(100, '-') << std::endl;
+    std::cout<<"<"<<this->getClientName()<<">"<<std::endl;
+    std::cout<<"-> ON REPLY RECEIVED: "<<std::endl;
+    std::cout<<"Time: "<<zmqutils::utils::currentISO8601Date()<<std::endl;
+    std::cout<<"Result: "<<result<<" ("<<res_str<<")"<<std::endl;
+    std::cout<<"Params Size: "<<reply.params_size<<std::endl;
+    std::cout<<"Params Hex: "<<serializer.getDataHexString()<<std::endl;
+    std::cout << std::string(100, '-') << std::endl;
+}
+
+void DomeControllerClient::onSendingCommand(const RequestData &req)
+{
+    BinarySerializer serializer(req.params.get(), req.params_size);
+    CommandType command = static_cast<CommandType>(req.command);
+    std::string cmd_str = zmqutils::utils::getEnumString(req.command, DomeServerCommandStr);
+    // Log.
+    std::cout << std::string(100, '-') << std::endl;
+    std::cout<<"<"<<this->getClientName()<<">"<<std::endl;
+    std::cout<<"-> ON SEND COMMAND: "<<std::endl;
+    std::cout<<"Time: "<<zmqutils::utils::currentISO8601Date()<<std::endl;
+    std::cout<<"Command: "<<command<<" ("<<cmd_str<<")"<<std::endl;
+    std::cout<<"Params size: "<<req.params_size<<std::endl;
+    std::cout<<"Params Hex: "<<serializer.getDataHexString()<<std::endl;
+    std::cout << std::string(100, '-') << std::endl;
+}
+
+void DomeControllerClient::onClientError(const zmq::error_t& error, const std::string& ext_info)
+{
+    // Log.
+    std::cout << std::string(100, '-') << std::endl;
+    std::cout<<"<"<<this->getClientName()<<">"<<std::endl;
+    std::cout<<"-> ON CLIENT ERROR: "<<std::endl;
+    std::cout<<"Time: "<<zmqutils::utils::currentISO8601Date()<<std::endl;
+    std::cout<<"Code: "<<error.num()<<std::endl;
+    std::cout<<"Error: "<<error.what()<<std::endl;
+    std::cout<<"Info: "<<ext_info<<std::endl;
+    std::cout << std::string(100, '-') << std::endl;
+}
+
+void DomeControllerClient::onInvalidMsgReceived(const CommandReply &) {}
+
+}} // END NAMESPACES.
+// =====================================================================================================================

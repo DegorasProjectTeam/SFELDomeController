@@ -60,7 +60,16 @@ int main(int, char**)
     using sfeldome::communication::DomeControllerServer;
     using sfeldome::communication::DomeServerCommand;
     using sfeldome::controller::DomeController;
-
+    // Callbacks
+    using sfeldome::controller::SetHomePositionFunction;
+    using sfeldome::controller::SetHomePositionFunctionInArgs;
+    using sfeldome::controller::SetHomePositionFunctionOutArgs;
+    using sfeldome::controller::GetHomePositionFunction;
+    using sfeldome::controller::GetHomePositionFunctionInArgs;
+    using sfeldome::controller::GetHomePositionFunctionOutArgs;
+    using sfeldome::controller::OpenSerialPortFunction;
+    using sfeldome::controller::OpenSerialPortFunctionInArgs;
+    using sfeldome::controller::OpenSerialPortFunctionOutArgs;
     // -------------------------------------------------------------------
 
     // Configure the console.
@@ -84,13 +93,26 @@ int main(int, char**)
 
     // Set the controller callbacks in the server.
 
-    dome_server.registerControllerCallback(DomeServerCommand::REQ_SET_HOME_POSITION,
-                                             &dome_controller,
-                                             &DomeController::setHomePosition);
+    dome_server.registerCallbackAndRequestProcFunc<SetHomePositionFunction,
+                                                   SetHomePositionFunctionInArgs,
+                                                   SetHomePositionFunctionOutArgs>
+        (DomeServerCommand::REQ_SET_HOME_POSITION,
+         &dome_controller,
+         &DomeController::setHomePosition);
 
-    dome_server.registerControllerCallback(DomeServerCommand::REQ_GET_HOME_POSITION,
-                                             &dome_controller,
-                                             &DomeController::getHomePosition);
+    dome_server.registerCallbackAndRequestProcFunc<GetHomePositionFunction,
+                                                   GetHomePositionFunctionInArgs,
+                                                   GetHomePositionFunctionOutArgs>
+        (DomeServerCommand::REQ_GET_HOME_POSITION,
+         &dome_controller,
+         &DomeController::getHomePosition);
+
+    dome_server.registerCallbackAndRequestProcFunc<OpenSerialPortFunction,
+                                                   OpenSerialPortFunctionInArgs,
+                                                   OpenSerialPortFunctionOutArgs>
+        (DomeServerCommand::REQ_OPEN_SERIAL_PORT,
+         &dome_controller,
+         &DomeController::openSerialPort);
 
     // -------------------------------------------------------------------
 

@@ -60,6 +60,7 @@
  * WARNING This now is a simple example. This must be replaced by the real server program.
  *
  */
+
 int main(int, char**)
 {
     sfeldome::controller::DomeController controller;

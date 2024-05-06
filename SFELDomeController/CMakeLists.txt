@@ -70,11 +70,8 @@ set(LIB_CONTROLLER_VER 0.0.1)
 set(LIB_CLIENT_NAME LibSFELDomeClient)
 set(LIB_CLIENT_VER 0.0.1)
 
-
-
-
 # Macros global configuration.
-macro_global_set_show_externals(TRUE)
+macro_global_set_show_externals(FALSE)
 macro_global_set_force_install_dir(TRUE)
 macro_global_set_install_runtime_deps(TRUE)
 macro_global_set_install_runtime_artifacts(TRUE)
@@ -105,7 +102,10 @@ set(LIB_SOURCES_DIR ${CMAKE_SOURCE_DIR}/sources)
 
 # Configure the LibZMQUtils package.
 include(ConfigLibZMQUtils)
-macro_configure_libzmqutils_default("1.6.6" EXACT "" "")
+macro_configure_libzmqutils_default("1.7.4" EXACT "" "")
+
+# Find CxxSerial package.
+find_package(serial REQUIRED)
 
 # Add external libraries location paths to global scope.
 macro_global_add_libs_full_paths("${LibZMQUtils_LOCATION}" "${LibZMQUtils_LOCATION_DEPENDENCIES}")
@@ -113,8 +113,6 @@ macro_global_add_libs_folders("${LibZMQUtils_LOCATION_DIR}" "${LibZMQUtils_LOCAT
 
 # Add the LibZMQUtils to global link variable.
 macro_global_add_libs_auto(${LibZMQUtils_LOCATION})
-
-# LIBRERIA SERIE????
 
 # ----------------------------------------------------------------------------------------------------------------------
 # LIBSFELDOMECONTROLLER LIBRARY SETUP
@@ -137,12 +135,33 @@ source_group("Alias Files" FILES ${ALIAS})
 macro_setup_shared_lib("${LIB_CONTROLLER_NAME}" "${LIB_INCLUDES_DIR}" "${LIB_CONTROLLER_VER}"
                         ${SOURCES1} ${SOURCES2} ${HEADERS} ${TEMPLTS} ${INL} ${ALIAS})
 
-# Link with LibZMQUtils
-macro_link_libzmqutils_default(${LIB_CONTROLLER_NAME} PUBLIC)
+# Link with LibZMQUtils and TODO SERIAL LIB.
+target_link_libraries(${LIB_CONTROLLER_NAME} PUBLIC LibZMQUtils::LibZMQUtils)
+
+target_include_directories(${LIB_CONTROLLER_NAME} INTERFACE ${SERIAL_INCLUDE_DIRS})
+
+if(MODULES_GLOBAL_SHOW_EXTERNALS)
+
+    # LibZMQUtils
+    get_target_property(LibZMQUtils_INCLUDES LibZMQUtils::LibZMQUtils INTERFACE_INCLUDE_DIRECTORIES)
+    file(GLOB_RECURSE EXTERNAL_HEADERS ${LibZMQUtils_INCLUDES}/*)
+    target_sources(${LIB_CONTROLLER_NAME} PUBLIC ${EXTERNAL_HEADERS})
+
+    # CXXSerial
+    file(GLOB_RECURSE EXTERNAL_HEADERS ${SERIAL_INCLUDE_DIRS}/*)
+    target_sources(${LIB_CONTROLLER_NAME} PUBLIC ${EXTERNAL_HEADERS})
 
 
-# LINK CON ZMQ
-# LINK CON SERIAL (SI NO ES HEADER)
+endif()
+
+# ----------------------------------------------------------------------------------------------------------------------
+# INTERFACE LIBRARY
+
+# Auxiliar interface library.
+set(LIB_INTERFACE_CONTROLLER_NAME "LibInterfaceController")
+add_library(${LIB_INTERFACE_CONTROLLER_NAME} INTERFACE)
+target_sources(${LIB_INTERFACE_CONTROLLER_NAME} INTERFACE ${CMAKE_SOURCE_DIR}/sources/DomeController/dome_controller_data.cpp)
+target_include_directories(${LIB_INTERFACE_CONTROLLER_NAME} INTERFACE ${CMAKE_SOURCE_DIR}/includes)
 
 # ----------------------------------------------------------------------------------------------------------------------
 # LIBSFELDOMECLIENT LIBRARY SETUP
@@ -166,6 +185,9 @@ macro_setup_shared_lib("${LIB_CLIENT_NAME}" "${LIB_INCLUDES_DIR}" "${LIB_CLIENT_
 
 # Link with LibZMQUtils
 macro_link_libzmqutils_default(${LIB_CLIENT_NAME} PUBLIC)
+
+# Link with interface.
+target_link_libraries(${LIB_CLIENT_NAME} PUBLIC ${LIB_INTERFACE_CONTROLLER_NAME})
 
 # ----------------------------------------------------------------------------------------------------------------------
 # CONFIGURE THE COMPILERS
