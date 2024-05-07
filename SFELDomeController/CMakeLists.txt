@@ -75,7 +75,7 @@ set(LIB_CLIENT_VER 0.0.1)
 set(BUILD_CONTROLLER TRUE)
 
 # Macros global configuration.
-macro_global_set_show_externals(TRUE)
+macro_global_set_show_externals(FALSE)
 macro_global_set_force_install_dir(TRUE)
 macro_global_set_install_runtime_deps(TRUE)
 macro_global_set_install_runtime_artifacts(TRUE)
@@ -125,8 +125,7 @@ find_package(LibSerial REQUIRED)
 file(GLOB_RECURSE HEADERS ${CMAKE_SOURCE_DIR}/includes/${LIB_CONTROLLER_NAME}/*.h)
 file(GLOB_RECURSE TEMPLTS ${CMAKE_SOURCE_DIR}/includes/${LIB_CONTROLLER_NAME}/*.tpp)
 file(GLOB_RECURSE INL ${CMAKE_SOURCE_DIR}/includes/${LIB_CONTROLLER_NAME}/*.inl)
-file(GLOB_RECURSE SOURCES1 ${CMAKE_SOURCE_DIR}/sources/DomeController/*.cpp)
-file(GLOB_RECURSE SOURCES2 ${CMAKE_SOURCE_DIR}/sources/DomeControllerServer/*.cpp)
+file(GLOB_RECURSE SOURCES1 ${CMAKE_SOURCE_DIR}/sources/${LIB_CONTROLLER_NAME}/*.cpp)
 
 # Module alias files.
 macro_get_files_without_extension(ALIAS ${CMAKE_SOURCE_DIR}/includes/${LIB_CONTROLLER_NAME}/*)
@@ -137,7 +136,7 @@ source_group("Alias Files" FILES ${ALIAS})
 
 # Setup the shared library.
 macro_setup_shared_lib("${LIB_CONTROLLER_NAME}" "${LIB_INCLUDES_DIR}" "${LIB_CONTROLLER_VER}"
-                        ${SOURCES1} ${SOURCES2} ${HEADERS} ${TEMPLTS} ${INL} ${ALIAS})
+                        ${SOURCES1} ${HEADERS} ${TEMPLTS} ${INL} ${ALIAS})
 
 # Link with LibZMQUtils and TODO SERIAL LIB.
 target_link_libraries(${LIB_CONTROLLER_NAME} PUBLIC LibZMQUtils::LibZMQUtils ${LIBSERIAL_LIBRARIES})
@@ -158,12 +157,12 @@ if(MODULES_GLOBAL_SHOW_EXTERNALS)
 endif()
 
 # ----------------------------------------------------------------------------------------------------------------------
-# INTERFACE LIBRARY
+# LIBSFELDOMECONTROLLER INTERFACE LIBRARY
 
 # Auxiliar interface library.
 set(LIB_INTERFACE_CONTROLLER_NAME "LibInterfaceController")
 add_library(${LIB_INTERFACE_CONTROLLER_NAME} INTERFACE)
-target_sources(${LIB_INTERFACE_CONTROLLER_NAME} INTERFACE ${CMAKE_SOURCE_DIR}/sources/DomeController/dome_controller_data.cpp)
+target_sources(${LIB_INTERFACE_CONTROLLER_NAME} INTERFACE ${CMAKE_SOURCE_DIR}/sources/${LIB_CONTROLLER_NAME}/dome_controller_data.cpp)
 target_include_directories(${LIB_INTERFACE_CONTROLLER_NAME} INTERFACE ${CMAKE_SOURCE_DIR}/includes)
 
 # ----------------------------------------------------------------------------------------------------------------------
@@ -173,7 +172,7 @@ target_include_directories(${LIB_INTERFACE_CONTROLLER_NAME} INTERFACE ${CMAKE_SO
 file(GLOB_RECURSE HEADERS ${CMAKE_SOURCE_DIR}/includes/${LIB_CLIENT_NAME}/*.h)
 file(GLOB_RECURSE TEMPLTS ${CMAKE_SOURCE_DIR}/includes/${LIB_CLIENT_NAME}/*.tpp)
 file(GLOB_RECURSE INL ${CMAKE_SOURCE_DIR}/includes/${LIB_CLIENT_NAME}/*.inl)
-file(GLOB_RECURSE SOURCES1 ${CMAKE_SOURCE_DIR}/sources/DomeControllerClient/*.cpp)
+file(GLOB_RECURSE SOURCES1 ${CMAKE_SOURCE_DIR}/sources/${LIB_CLIENT_NAME}/*.cpp)
 
 # Module alias files.
 macro_get_files_without_extension(ALIAS ${CMAKE_SOURCE_DIR}/includes/${LIB_CLIENT_NAME}/*)

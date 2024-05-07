@@ -27,10 +27,6 @@
 
 // C++ INCLUDES
 // =====================================================================================================================
-#ifdef _WIN32
-#define NOMINMAX
-#include <Windows.h>
-#endif
 #include <iostream>
 #include <limits>
 // =====================================================================================================================
@@ -67,8 +63,27 @@ int main(int, char**)
                device.hardware_id.c_str() );
     }
 
+    serial::Serial my_serial("/dev/ttyS2", 9600);
+
+    std::cout << "Is the serial port open?";
+    if(my_serial.isOpen())
+        std::cout << " Yes." << std::endl;
+    else
+        std::cout << " No." << std::endl;
+
+    std::string test_string;
+        test_string = "Testing.";
+      int count = 0;
+        std::cout << "Timeout == 1000ms, asking for 1 more byte than written." << std::endl;
+    while (count < 10) {
+        size_t bytes_wrote = my_serial.write(test_string);
 
 
+        std::cout << "Iteration: " << count << ", Bytes written: ";
+        std::cout << bytes_wrote << ", Bytes read: ";
+
+        count += 1;
+    }
     // Nampesaces.
     using sfeldome::communication::DomeControllerServer;
     using sfeldome::communication::DomeServerCommand;

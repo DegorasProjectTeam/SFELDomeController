@@ -2,7 +2,7 @@
 
 // PROJECT INCLUDES
 // =====================================================================================================================
-#include "LibSFELDomeClient/DomeControllerClient/dome_controller_client.h"
+#include "LibSFELDomeClient/dome_controller_client.h"
 // =====================================================================================================================
 
 // AMELAS NAMESPACES

@@ -2,7 +2,7 @@
 
 // PROJECT INCLUDES
 // =====================================================================================================================
-#include "LibSFELDomeController/DomeController/dome_controller.h"
+#include "LibSFELDomeController/dome_controller.h"
 // =====================================================================================================================
 
 #include <serial/serial.h>

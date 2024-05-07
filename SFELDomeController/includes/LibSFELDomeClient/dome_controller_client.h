@@ -15,8 +15,8 @@
 
 // INTERFACE INCLUDES
 // =====================================================================================================================
-#include <LibSFELDomeController/DomeController/dome_controller_data.h>
-#include <LibSFELDomeController/DomeControllerServer/dome_controller_server_data.h>
+#include <LibSFELDomeController/dome_controller_data.h>
+#include <LibSFELDomeController/dome_controller_server_data.h>
 // =====================================================================================================================
 
 // AMELAS NAMESPACES

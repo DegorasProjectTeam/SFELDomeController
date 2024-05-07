@@ -54,7 +54,7 @@
 
 // PROJECT INCLUDES
 // =====================================================================================================================
-#include "AmelasController/amelas_log.h"
+
 // =====================================================================================================================
 
 // NAMESPACES
@@ -63,31 +63,31 @@ namespace amelas{
 namespace communication{
 // =====================================================================================================================
 
-static constexpr std::array<const char*, 3>  AmelasLoggerTopic
-{
-    "LOG_INFO",
-    "LOG_WARNING",
-    "LOG_ERROR"
-};
+// static constexpr std::array<const char*, 3>  AmelasLoggerTopic
+// {
+//     "LOG_INFO",
+//     "LOG_WARNING",
+//     "LOG_ERROR"
+// };
 
-class AmelasLoggerPublisher : public zmqutils::pubsub::PublisherBase
-{
-public:
+// class AmelasLoggerPublisher : public zmqutils::pubsub::PublisherBase
+// {
+// public:
 
-    AmelasLoggerPublisher(std::string endpoint, std::string name = "");
+//     AmelasLoggerPublisher(std::string endpoint, std::string name = "");
 
-    zmqutils::pubsub::PublisherResult sendLog(const controller::AmelasLog& log);
+//     zmqutils::pubsub::PublisherResult sendLog(const controller::AmelasLog& log);
 
-private:
+// private:
 
-    virtual void onPublisherStart() override final;
+//     virtual void onPublisherStart() override final;
 
-    virtual void onPublisherStop() override final;
+//     virtual void onPublisherStop() override final;
 
-    virtual void onSendingMsg(const zmqutils::pubsub::PubSubData&) override final;
+//     virtual void onSendingMsg(const zmqutils::pubsub::PubSubData&) override final;
 
-    virtual void onPublisherError(const zmq::error_t&, const std::string& ext_info) override final;
-};
+//     virtual void onPublisherError(const zmq::error_t&, const std::string& ext_info) override final;
+// };
 
 }} // END NAMESPACES.
 // =====================================================================================================================

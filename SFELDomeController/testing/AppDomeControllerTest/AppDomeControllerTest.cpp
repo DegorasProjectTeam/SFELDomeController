@@ -31,19 +31,11 @@
 #define NOMINMAX
 #include <Windows.h>
 #endif
-#include <iostream>
-#include <chrono>
-#include <thread>
-#include <csignal>
-#include <limits>
-#include <any>
-#include <sstream>
 // =====================================================================================================================
 
 // ZMQUTILS INCLUDES
 // =====================================================================================================================
-#include <LibZMQUtils/Modules/Utilities>
-#include <LibSFELDomeController/DomeController/dome_controller.h>
+
 
 // =====================================================================================================================
 
@@ -63,7 +55,7 @@
 
 int main(int, char**)
 {
-    sfeldome::controller::DomeController controller;
+    //sfeldome::controller::DomeController controller;
 	return 0;
 }
 
