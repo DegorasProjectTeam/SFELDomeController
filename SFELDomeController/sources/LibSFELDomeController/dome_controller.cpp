@@ -13,64 +13,31 @@ namespace sfeldome{
 namespace controller{
 // =====================================================================================================================
 
-DomeController::DomeController() :
-    home_pos_({-1,-1})
-{}
+DomeController::DomeController() {}
 
-DomeError DomeController::setHomePosition(const AltAzPos &pos)
+DomeError DomeController::findHome()
 {
-    // Auxiliar result.
-    DomeError error = DomeError::SUCCESS;
 
-    // Check the provided values if necessary.
-    // [...]
-
-    // Store the value
-    this->home_pos_ = pos;
-
-    // Do things in the hardware (PLC) or FPGA.
-    // this->doPLCSetHomePosition(isdhfkljsdhilfhlisd)
-    // WARNING: Remember use async if the tasks are computationally demanding.
-    // [...]
-
-    // Log.
-    std::string cmd_str = ControllerErrorStr[static_cast<size_t>(error)];
-    std::cout << std::string(100, '-') << std::endl;
-    std::cout<<"<SFEL DOME CONTROLLER>"<<std::endl;
-    std::cout<<"-> SET_HOME_POSITION"<<std::endl;
-    std::cout<<"Time: "<<zmqutils::utils::currentISO8601Date()<<std::endl;
-    std::cout<<"Az: "<<pos.az<<std::endl;
-    std::cout<<"El: "<<pos.el<<std::endl;
-    std::cout<<"Error: "<<static_cast<int>(error)<<" ("<<cmd_str<<")"<<std::endl;
-    std::cout << std::string(100, '-') << std::endl;
-
-    return error;
+    return DomeError::CONTROLLER_COMM_ERROR;
 }
 
-DomeError DomeController::getHomePosition(AltAzPos &pos)
+DomeError DomeController::incTarget(int deg)
 {
-    pos = this->home_pos_;
-
-    std::cout << std::string(100, '-') << std::endl;
-    std::cout<<"<SFEL DOME CONTROLLER>"<<std::endl;
-    std::cout<<"-> GET_HOME_POSITION"<<std::endl;
-    std::cout<<"Time: "<<zmqutils::utils::currentISO8601Date()<<std::endl;
-    std::cout << std::string(100, '-') << std::endl;
-
-    return DomeError::SUCCESS;
+    return DomeError::CONTROLLER_COMM_ERROR;
 }
 
-DomeError DomeController::openSerialPort(const std::string& serial_port)
+DomeError DomeController::setTarget(int deg)
 {
-    // ABRIR SERIAL PORT
+    return DomeError::CONTROLLER_COMM_ERROR;
+}
 
-    std::cout << std::string(100, '-') << std::endl;
-    std::cout<<"<SFEL DOME CONTROLLER>"<<std::endl;
-    std::cout<<"-> OPEN_SERIAL_PORT"<<std::endl;
-    std::cout<<"Serial Port: "<<serial_port<<std::endl;
-    std::cout<<"Time: "<<zmqutils::utils::currentISO8601Date()<<std::endl;
-    std::cout << std::string(100, '-') << std::endl;
+DomeError DomeController::getPos(int &deg)
+{
+    return DomeError::CONTROLLER_COMM_ERROR;
+}
 
+DomeError DomeController::setEnMovement(bool en)
+{
     return DomeError::CONTROLLER_COMM_ERROR;
 }
 

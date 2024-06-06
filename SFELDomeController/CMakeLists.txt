@@ -106,7 +106,7 @@ set(LIB_SOURCES_DIR ${CMAKE_SOURCE_DIR}/sources)
 
 # Configure the LibZMQUtils package.
 include(ConfigLibZMQUtils)
-macro_configure_libzmqutils_default("1.7.5" EXACT "" "")
+macro_configure_libzmqutils_default("1.7.6" EXACT "" "")
 
 # Add external libraries location paths to global scope.
 macro_global_add_libs_full_paths("${LibZMQUtils_LOCATION}" "${LibZMQUtils_LOCATION_DEPENDENCIES}")
@@ -191,6 +191,102 @@ macro_link_libzmqutils_default(${LIB_CLIENT_NAME} PUBLIC)
 # Link with interface.
 target_link_libraries(${LIB_CLIENT_NAME} PUBLIC ${LIB_INTERFACE_CONTROLLER_NAME})
 
+# **********************************************************************************************************************
+# PRODUCT APPLICATIONS PART
+# NOTES: Add more applications if neccesary.
+set(APP_BUILD_FOLDER ${CMAKE_BINARY_DIR}/bin)
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${APP_BUILD_FOLDER})
+
+# ----------------------------------------------------------------------------------------------------------------------
+# SFEL DOME CONTROLLER SERVER
+
+# App config.
+set(APP_SERVER "SFELDomeControllerServerApp")
+
+# Get the header files for the server.
+file(GLOB_RECURSE APP_SERVER_HEADERS LIST_DIRECTORIES FALSE
+    sources/Applications/SFELDomeControllerServerApp/*.h)
+
+# Get the source files for server.
+file(GLOB_RECURSE APP_SERVER_SOURCES LIST_DIRECTORIES FALSE
+    sources/Applications/SFELDomeControllerServerApp/*.cpp)
+
+# Clean alias files and templates.
+set(ALIAS "")
+set(TEMPLTS "")
+
+# Set libraries. For win32 only.
+if (WIN32)
+    set(LIBRARIES ${LIB_SERVER_NAME} ${LIB_CLIENT_NAME} ${LIB_COMMON_NAME})
+endif()
+
+# Setup the server launcher.
+macro_setup_launcher("${APP_SERVER}"
+                     "${MODULES_GLOBAL_LIBS_OPTIMIZED}"
+                     "${MODULES_GLOBAL_LIBS_DEBUG}"
+                     "${APP_SERVER_SOURCES}")
+
+# In mingw better do static linking of the libgcc, libwinpthread and libstd.
+if (MINGW)
+    target_link_libraries(${APP_SERVER} PRIVATE -static-libgcc -static-libstdc++ -static -lpthread)
+endif()
+
+# Prepare the external library search folders.
+set(ext_libs_loc "${MODULES_GLOBAL_INSTALL_LIB_PATH}"
+                 "${MODULES_GLOBAL_INSTALL_BIN_PATH}")
+
+# Install the launcher.
+macro_install_launcher("${APP_SERVER}"
+                       "${MODULES_GLOBAL_INSTALL_BIN_PATH}")
+
+
+# ----------------------------------------------------------------------------------------------------------------------
+
+# ----------------------------------------------------------------------------------------------------------------------
+# SFEL DOME CONTROLLER CLIENT
+
+# App config.
+set(APP_CLIENT "SFELDomeControllerClientApp")
+
+# Get the header files for the server.
+file(GLOB_RECURSE APP_CLIENT_HEADERS LIST_DIRECTORIES FALSE
+    sources/Applications/SFELDomeControllerClientApp/*.h)
+
+# Get the source files for server.
+file(GLOB_RECURSE APP_CLIENT_SOURCES LIST_DIRECTORIES FALSE
+    sources/Applications/SFELDomeControllerClientApp/*.cpp)
+
+# Clean alias files and templates.
+set(ALIAS "")
+set(TEMPLTS "")
+
+# Set libraries. For win32 only.
+if (WIN32)
+    set(LIBRARIES ${LIB_CLIENT_NAME} ${LIB_COMMON_NAME})
+endif()
+
+# Setup the client launcher.
+macro_setup_launcher("${APP_CLIENT}"
+                     "${MODULES_GLOBAL_LIBS_OPTIMIZED}"
+                     "${MODULES_GLOBAL_LIBS_DEBUG}"
+                     "${APP_CLIENT_HEADERS}"
+                     "${APP_CLIENT_SOURCES}")
+
+# In mingw better do static linking of the libgcc, libwinpthread and libstd.
+if (MINGW)
+    target_link_libraries(${APP_CLIENT} PRIVATE -static-libgcc -static-libstdc++ -static -lpthread)
+endif()
+
+# Prepare the external library search folders.
+set(ext_libs_loc "${MODULES_GLOBAL_INSTALL_LIB_PATH}"
+                 "${MODULES_GLOBAL_INSTALL_BIN_PATH}")
+
+# Install the launcher.
+macro_install_launcher("${APP_CLIENT}"
+                       "${MODULES_GLOBAL_INSTALL_BIN_PATH}")
+
+# ----------------------------------------------------------------------------------------------------------------------
+
 # ----------------------------------------------------------------------------------------------------------------------
 # CONFIGURE THE COMPILERS
 
@@ -214,7 +310,7 @@ endif()
 # ----------------------------------------------------------------------------------------------------------------------
 # SETUP THE TESTS AND APPLICATIONS
 
-add_subdirectory(testing)
+#add_subdirectory(testing)
 #add_subdirectory(CommandServerClient)
 
 # **********************************************************************************************************************

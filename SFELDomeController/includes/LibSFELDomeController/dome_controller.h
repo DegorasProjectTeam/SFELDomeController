@@ -33,32 +33,34 @@ public:
 
     DomeController();
 
-    DomeError setHomePosition(const AltAzPos& pos);
+    DomeError findHome();
+    DomeError incTarget(int deg);
+    DomeError setTarget(int deg);
+    DomeError getPos(int &deg);
+    DomeError setEnMovement(bool en);
 
-    DomeError getHomePosition(AltAzPos& pos);
-
-    DomeError openSerialPort(const std::string& serial_port);
-
-
-private:
-
-    AltAzPos home_pos_;
 };
 
-// Callback function type aliases
-using SetHomePositionFunction = std::function<DomeError(const AltAzPos&)>;
-using GetHomePositionFunction = std::function<DomeError(AltAzPos&)>;
-using OpenSerialPortFunction = std::function<DomeError(const std::string&)>;
 
-// Callback function arguments type aliases
-using SetHomePositionFunctionInArgs = std::tuple<AltAzPos>;
-using SetHomePositionFunctionOutArgs = std::tuple<>;
-//
-using GetHomePositionFunctionInArgs = std::tuple<>;
-using GetHomePositionFunctionOutArgs = std::tuple<AltAzPos>;
-//
-using OpenSerialPortFunctionInArgs = std::tuple<std::string>;
-using OpenSerialPortFunctionOutArgs = std::tuple<>;
+using FindHomeCallback = std::function<DomeError()>;
+using FindHomeCallbackInArgs = std::tuple<>;
+using FindHomeCallbackOutArgs = std::tuple<>;
+
+using IncTargetCallback = std::function<DomeError(int)>;
+using IncTargetCallbackInArgs = std::tuple<int>;
+using IncTargetCallbackOutArgs = std::tuple<>;
+
+using SetTargetCallback = std::function<DomeError(int)>;
+using SetTargetCallbackInArgs = std::tuple<int>;
+using SetTargetCallbackOutArgs = std::tuple<>;
+
+using GetPosCallback = std::function<DomeError(int&)>;
+using GetPosCallbackInArgs = std::tuple<>;
+using GetPosCallbackOutArgs = std::tuple<int>;
+
+using SetEnMovementCallback = std::function<DomeError(bool)>;
+using SetEnMovementCallbackInArgs = std::tuple<bool>;
+using SetEnMovementCallbackOutArgs = std::tuple<>;
 
 }} // END NAMESPACES.
 // =====================================================================================================================

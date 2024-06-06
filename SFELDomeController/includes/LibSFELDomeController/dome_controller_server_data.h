@@ -13,7 +13,7 @@
 
 // LIBZMQUTILS INCLUDES
 // =====================================================================================================================
-#include <LibZMQUtils/Modules/CommandServer>
+#include <LibZMQUtils/Modules/CommandServerClient>
 // =====================================================================================================================
 
 // SFEL DOME NAMESPACES
@@ -24,38 +24,42 @@ namespace communication{
 
 // Specific subclass commands (0 to 30 are reserved for the base server).
 // WARNING: In our approach, the server commands must be always in order.
-enum class DomeServerCommand : zmqutils::serverclient::CommandType
+enum class DomeServerCommand : zmqutils::reqrep::CommandType
 {
-    REQ_SET_HOME_POSITION = 31,
-    REQ_GET_HOME_POSITION = 32,
-    REQ_OPEN_SERIAL_PORT  = 33,
-    END_IMPL_COMMANDS     = 34,
-    END_DOME_COMMANDS     = 35
+    REQ_FIND_HOME = 31,
+    REQ_INC_TARGET,
+    REQ_SET_TARGET,
+    REQ_GET_POS,
+    REQ_EN_MOVEMENT,
+    END_IMPL_COMMANDS,
+    END_DOME_COMMANDS
 };
 
 // Specific subclass errors (0 to 30 are reserved for the base server).
-enum class DomeOperationResult : zmqutils::serverclient::ResultType
+enum class DomeOperationResult : zmqutils::reqrep::ResultType
 {};
 
 // Extend the base command strings with those of the subclass.
 static constexpr auto DomeServerCommandStr = zmqutils::utils::joinArraysConstexpr(
-zmqutils::serverclient::ServerCommandStr, std::array<const char*, 5>
+zmqutils::reqrep::ServerCommandStr, std::array<const char*, 7>
 {
-    "REQ_SET_HOME_POSITION",
-    "REQ_GET_HOME_POSITION",
-    "OPEN_SERIAL_PORT",
+    "REQ_FIND_HOME",
+    "REQ_INC_TARGET",
+    "REQ_SET_TARGET",
+    "REQ_GET_POS",
+    "REQ_EN_MOVEMENT",
     "END_IMPL_COMMANDS",
     "END_DOME_COMMANDS"
 });
 
 // Extend the base result strings with those of the subclass.
 static constexpr auto DomeOperationResultStr = zmqutils::utils::joinArraysConstexpr(
-zmqutils::serverclient::OperationResultStr, std::array<const char*, 2>
+zmqutils::reqrep::OperationResultStr, std::array<const char*, 2>
 {
 });
 
 // Usefull const expressions.
-constexpr std::int32_t kMinCmdId = static_cast<std::int32_t>(zmqutils::serverclient::ServerCommand::END_BASE_COMMANDS) + 1;
+constexpr std::int32_t kMinCmdId = static_cast<std::int32_t>(zmqutils::reqrep::ServerCommand::END_BASE_COMMANDS) + 1;
 constexpr std::int32_t kMaxCmdId = static_cast<std::int32_t>(DomeServerCommand::END_DOME_COMMANDS) - 1;
 
 }} // END NAMESPACES.

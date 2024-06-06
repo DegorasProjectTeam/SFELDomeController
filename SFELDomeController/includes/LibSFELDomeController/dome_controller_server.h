@@ -43,20 +43,16 @@
 
 // C++ INCLUDES
 // =====================================================================================================================
-#include <string>
 // =====================================================================================================================
 
 // LIBZMQUTILS INCLUDES
 // =====================================================================================================================
-#include <LibZMQUtils/Modules/CallbackCommandServer>
+#include <LibZMQUtils/Modules/CommandServerClient>
 #include <LibZMQUtils/Modules/Utilities>
 // =====================================================================================================================
 
 // PROJECT INCLUDES
 // =====================================================================================================================
-#include "LibSFELDomeController/dome_controller_data.h"
-#include "LibSFELDomeController/dome_controller.h"
-#include "LibSFELDomeController/dome_controller_server_data.h"
 // =====================================================================================================================
 
 // SFEL DOME NAMESPACES
@@ -66,55 +62,30 @@ namespace communication{
 // =====================================================================================================================
 
 // Example of creating a command server from the base.
-class DomeControllerServer : public zmqutils::serverclient::ClbkCommandServerBase
+class DomeControllerServer : public zmqutils::reqrep::DebugClbkCommandServerBase
 {
 public:
 
-    DomeControllerServer(unsigned port, const std::string& local_addr = "*");
+    DomeControllerServer(unsigned server_port,
+                         const std::string& server_iface = "*",
+                         bool log_internal_callbacks = true);
+
+    DomeControllerServer(unsigned server_port,
+                         const std::string& server_iface = "*",
+                         const std::string& server_name = "",
+                         const std::string& server_version = "",
+                         const std::string& server_info = "",
+                         bool log_internal_callbacks = true);
 
 private:
 
     // -----------------------------------------------------------------------------------------------------------------
-    using CommandServerBase::registerRequestProcFunc;
+    using CommandServerBase::registerReqProcFunc;
     using ClbkCommandServerBase::registerCallback;
     // -----------------------------------------------------------------------------------------------------------------
 
-    // Internal overrided command validation function.
-    virtual bool validateCustomCommand(zmqutils::serverclient::ServerCommand command) final;
-
-    // Internal overrided custom command received callback.
-    virtual void onCustomCommandReceived(zmqutils::serverclient::CommandRequest&,
-                                         zmqutils::serverclient::CommandReply&) final;
-
-    // Internal overrided start callback.
-    virtual void onServerStart() final;
-
-    // Internal overrided close callback.
-    virtual void onServerStop() final;
-
-    // Internal waiting command callback.
-    virtual void onWaitingCommand() final;
-
-    // Internal dead client callback.
-    virtual void onDeadClient(const zmqutils::serverclient::HostInfo&) final;
-
-    // Internal overrided connect callback.
-    virtual void onConnected(const zmqutils::serverclient::HostInfo&) final;
-
-    // Internal overrided disconnect callback.
-    virtual void onDisconnected(const zmqutils::serverclient::HostInfo&) final;
-
-    // Internal overrided command received callback.
-    virtual void onCommandReceived(const zmqutils::serverclient::CommandRequest&) final;
-
-    // Internal overrided bad command received callback.
-    virtual void onInvalidMsgReceived(const zmqutils::serverclient::CommandRequest&) final;
-
-    // Internal overrided sending response callback.
-    virtual void onSendingResponse(const zmqutils::serverclient::CommandReply&) final;
-
-    // Internal overrided server error callback.
-    virtual void onServerError(const zmq::error_t&, const std::string& ext_info) final;
+    // CommandServerBase interface
+    bool validateCustomRequest(const zmqutils::reqrep::CommandRequest &request) const;
 };
 
 }} // END NAMESPACES.

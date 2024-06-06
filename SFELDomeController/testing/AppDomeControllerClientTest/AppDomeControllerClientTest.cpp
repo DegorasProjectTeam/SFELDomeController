@@ -46,12 +46,12 @@
 // =====================================================================================================================
 
 // ---------------------------------------------------------------------------------------------------------------------
-using zmqutils::serverclient::CommandType;
-using zmqutils::serverclient::CommandReply;
-using zmqutils::serverclient::ServerCommand;
-using zmqutils::serverclient::CommandClientBase;
-using zmqutils::serverclient::RequestData;
-using zmqutils::serverclient::OperationResult;
+using zmqutils::reqrep::CommandType;
+using zmqutils::reqrep::CommandReply;
+using zmqutils::reqrep::ServerCommand;
+using zmqutils::reqrep::CommandClientBase;
+using zmqutils::reqrep::RequestData;
+using zmqutils::reqrep::OperationResult;
 using sfeldome::communication::DomeControllerClient;
 using sfeldome::communication::DomeServerCommand;
 using sfeldome::controller::AltAzPos;
@@ -65,7 +65,7 @@ public:
     DomeClientParser(DomeControllerClient &client) : client_(client)
     {}
 
-    zmqutils::serverclient::OperationResult parseCommand(const std::string &command)
+    OperationResult parseCommand(const std::string &command)
     {
         auto tokens = zmqutils::internal_helpers::strings::split<std::vector<std::string>>(command, " ", false);
 
@@ -192,9 +192,7 @@ private:
 
     }
 
-    void processGetHomePosition(zmqutils::serverclient::OperationResult res,
-                                const sfeldome::controller::AltAzPos &pos,
-                                sfeldome::controller::DomeError error)
+    void processGetHomePosition(OperationResult res, AltAzPos &pos, DomeError error)
     {
         if (OperationResult::COMMAND_OK == res)
         {

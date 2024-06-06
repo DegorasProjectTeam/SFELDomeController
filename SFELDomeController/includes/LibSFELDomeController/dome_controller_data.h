@@ -68,6 +68,9 @@ struct LIBDOMECONTROLLER_EXPORT AltAzPos final : public zmqutils::serializer::Se
     double el;
 };
 
+using AltAzVel = AltAzPos;
+using AltAzAdj = AltAzPos;
+
 // =====================================================================================================================
 
 }} // END NAMESPACES.

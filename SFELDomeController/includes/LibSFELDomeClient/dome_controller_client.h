@@ -9,7 +9,7 @@
 
 // LIBZMQUTILS INCLUDES
 // =====================================================================================================================
-#include <LibZMQUtils/Modules/CommandClient>
+#include <LibZMQUtils/Modules/CommandServerClient>
 #include <LibZMQUtils/Modules/Utilities>
 // =====================================================================================================================
 
@@ -25,52 +25,33 @@ namespace sfeldome{
 namespace communication{
 // =====================================================================================================================
 
-class DomeControllerClient : public zmqutils::serverclient::CommandClientBase
+class DomeControllerClient : public zmqutils::reqrep::DebugCommandClientBase
 {
 public:
 
     DomeControllerClient(const std::string& server_endpoint,
+                         const std::string& client_iface = "",
                          const std::string& client_name = "",
-                         const std::string interf_name = "");
+                         const std::string& client_version = "",
+                         const std::string& client_info = "",
+                         bool log_internal_callbacks = true);
+
+    DomeControllerClient(const std::string& server_endpoint,
+                         const std::string& client_iface = "",
+                         bool log_internal_callbacks = true);
 
     template<typename CmdId>
     bool validateCommand(CmdId command) const
     {
-        return (CommandClientBase::validateCommand(command) ||
+        return (zmqutils::reqrep::CommandClientBase::isBaseCommand(command) ||
                 (static_cast<std::int32_t>(command) >= kMinCmdId && static_cast<std::int32_t>(command) <= kMaxCmdId));
     }
 
-    zmqutils::serverclient::OperationResult getHomePosition(controller::AltAzPos &pos,
-                                                            controller::DomeError &res);
+    zmqutils::reqrep::OperationResult getHomePosition(controller::AltAzPos &pos, controller::DomeError &res);
 
-    zmqutils::serverclient::OperationResult setHomePosition(const controller::AltAzPos &pos,
-                                                            controller::DomeError &res);
+    zmqutils::reqrep::OperationResult setHomePosition(const controller::AltAzPos &pos, controller::DomeError &res);
 
-    zmqutils::serverclient::OperationResult openSerialPort(const std::string&,
-                                                           controller::DomeError &res);
-
-
-private:
-
-    virtual void onClientStart() override final;
-
-    virtual void onClientStop() override final;
-
-    virtual void onWaitingReply() override final;
-
-    virtual void onDeadServer() override final;
-
-    virtual void onConnected() override final;
-
-    virtual void onDisconnected() override final;
-
-    virtual void onInvalidMsgReceived(const zmqutils::serverclient::CommandReply&) override final;
-
-    virtual void onReplyReceived(const zmqutils::serverclient::CommandReply& reply) override final;
-
-    virtual void onSendingCommand(const zmqutils::serverclient::RequestData&) override final;
-
-    virtual void onClientError(const zmq::error_t&, const std::string& ext_info) override final;
+    zmqutils::reqrep::OperationResult openSerialPort(const std::string&, controller::DomeError &res);
 };
 
 }} // END NAMESPACES.
