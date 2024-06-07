@@ -47,11 +47,19 @@ public:
                 (static_cast<std::int32_t>(command) >= kMinCmdId && static_cast<std::int32_t>(command) <= kMaxCmdId));
     }
 
-    zmqutils::reqrep::OperationResult getHomePosition(controller::AltAzPos &pos, controller::DomeError &res);
+    zmqutils::reqrep::OperationResult findHome(controller::DomeError &res);
 
-    zmqutils::reqrep::OperationResult setHomePosition(const controller::AltAzPos &pos, controller::DomeError &res);
+    zmqutils::reqrep::OperationResult incTarget(int deg, controller::DomeError &res);
 
-    zmqutils::reqrep::OperationResult openSerialPort(const std::string&, controller::DomeError &res);
+    zmqutils::reqrep::OperationResult setTarget(int deg, controller::DomeError &res);
+
+    zmqutils::reqrep::OperationResult getTarget(int &deg, controller::DomeError &res);
+
+    zmqutils::reqrep::OperationResult getPos(int &deg, controller::DomeError &res);
+
+    zmqutils::reqrep::OperationResult setEnMovement(bool en, controller::DomeError &res);
+
+    zmqutils::reqrep::OperationResult stop(controller::DomeError &res);
 };
 
 }} // END NAMESPACES.

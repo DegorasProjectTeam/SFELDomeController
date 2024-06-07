@@ -126,15 +126,59 @@ OperationResult SFELDomeClientParser::executeCommand(
 
         std::cout << "Elapsed time is: " << std::to_string(elapsed_time.count()) << " ms." << std::endl;
     }
-    else if (command_id == static_cast<CommandType>(DomeServerCommand::REQ_OPEN_SERIAL_PORT))
+    else if (command_id == static_cast<CommandType>(DomeServerCommand::REQ_FIND_HOME))
     {
+        res = this->client_.findHome(error);
+    }
+    else if (command_id == static_cast<CommandType>(DomeServerCommand::REQ_INC_TARGET))
+    {
+        try
+        {
+            res = this->client_.incTarget(std::stoi(params.at(0)), error);
+        }
+        catch (...)
+        {
+            res = OperationResult::BAD_PARAMETERS;
+        }
+    }
+    else if (command_id == static_cast<CommandType>(DomeServerCommand::REQ_SET_TARGET))
+    {
+        try
+        {
+            res = this->client_.setTarget(std::stoi(params.at(0)), error);
+        }
+        catch (...)
+        {
+            res = OperationResult::BAD_PARAMETERS;
+        }
+    }
+    else if (command_id == static_cast<CommandType>(DomeServerCommand::REQ_GET_TARGET))
+    {
+        int pos;
+        res = this->client_.getTarget(pos, error);
+        std::cout << "Current target is " << pos << "º." << std::endl;
+    }
+    else if (command_id == static_cast<CommandType>(DomeServerCommand::REQ_GET_POS))
+    {
+        int pos;
+        res = this->client_.getPos(pos, error);
+        std::cout << "Current pos is " << pos << "º." << std::endl;
+    }
+    else if (command_id == static_cast<CommandType>(DomeServerCommand::REQ_EN_MOVEMENT))
+    {
+        bool flag;
         if (params.size() == 1)
         {
-            res = this->client_.openSerialPort(params[0], error);
+            this->parseBool(params, flag);
+            res = this->client_.setEnMovement(flag, error);
         }
         else
             res = OperationResult::BAD_PARAMETERS;
 
+    }
+    else if (command_id == static_cast<CommandType>(DomeServerCommand::REQ_STOP))
+    {
+        res = this->client_.stop(error);
     }
     else
     {
@@ -217,8 +261,7 @@ bool SFELDomeClientParser::parseAltAz(const std::vector<std::string> &params, Al
 
 }
 
-bool SFELDomeClientParser::parseAltAzPosVel(const std::vector<std::string> &params,
-                                                                 AltAzPos &pos, AltAzVel &vel)
+bool SFELDomeClientParser::parseAltAzPosVel(const std::vector<std::string> &params, AltAzPos &pos, AltAzVel &vel)
 {
     if (params.size() != 2 && params.size() != 4)
         return false;

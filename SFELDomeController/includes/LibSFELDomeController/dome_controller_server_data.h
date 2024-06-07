@@ -29,8 +29,10 @@ enum class DomeServerCommand : zmqutils::reqrep::CommandType
     REQ_FIND_HOME = 31,
     REQ_INC_TARGET,
     REQ_SET_TARGET,
+    REQ_GET_TARGET,
     REQ_GET_POS,
     REQ_EN_MOVEMENT,
+    REQ_STOP,
     END_IMPL_COMMANDS,
     END_DOME_COMMANDS
 };
@@ -41,13 +43,15 @@ enum class DomeOperationResult : zmqutils::reqrep::ResultType
 
 // Extend the base command strings with those of the subclass.
 static constexpr auto DomeServerCommandStr = zmqutils::utils::joinArraysConstexpr(
-zmqutils::reqrep::ServerCommandStr, std::array<const char*, 7>
+zmqutils::reqrep::ServerCommandStr, std::array<const char*, 9>
 {
     "REQ_FIND_HOME",
     "REQ_INC_TARGET",
     "REQ_SET_TARGET",
+    "REQ_GET_TARGET",
     "REQ_GET_POS",
     "REQ_EN_MOVEMENT",
+    "REQ_STOP",
     "END_IMPL_COMMANDS",
     "END_DOME_COMMANDS"
 });

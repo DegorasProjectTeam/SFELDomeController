@@ -70,8 +70,20 @@ void printSFELDomeCommands()
              <<">  4 - REQ_PING"                                                         <<std::endl
              <<"------------------------------------------------------"                  <<std::endl
              <<"-- Specific Commands --"                                                 <<std::endl
-             <<"> "<< static_cast<int>(DomeServerCommand::REQ_OPEN_SERIAL_PORT)
-             << " - REQ_OPEN_SERIAL_PORT"                                                <<std::endl
+             <<"> "<< static_cast<int>(DomeServerCommand::REQ_FIND_HOME)
+             << " - REQ_FIND_HOME"                                                       <<std::endl
+             <<"> "<< static_cast<int>(DomeServerCommand::REQ_INC_TARGET)
+             << " - REQ_INC_TARGET deg(int)"                                             <<std::endl
+             <<"> "<< static_cast<int>(DomeServerCommand::REQ_SET_TARGET)
+             << " - REQ_SET_TARGET deg(int)"                                             <<std::endl
+             <<"> "<< static_cast<int>(DomeServerCommand::REQ_GET_TARGET)
+             << " - REQ_GET_TARGET"                                                      <<std::endl
+             <<"> "<< static_cast<int>(DomeServerCommand::REQ_GET_POS)
+             << " - REQ_GET_POS"                                                         <<std::endl
+             <<"> "<< static_cast<int>(DomeServerCommand::REQ_EN_MOVEMENT)
+             << " - REQ_EN_MOVEMENT"                                                     <<std::endl
+             <<"> "<< static_cast<int>(DomeServerCommand::REQ_STOP)
+             << " - REQ_STOP"                                                            <<std::endl
              <<"-- Other --"                                                             <<std::endl
              <<"> Show the commands:       help"                                         <<std::endl
              <<"> Client exit:             exit"                                         <<std::endl

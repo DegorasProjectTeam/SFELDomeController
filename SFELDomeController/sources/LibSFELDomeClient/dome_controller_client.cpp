@@ -48,24 +48,43 @@ DomeControllerClient::DomeControllerClient(const std::string &server_endpoint,
     this->registerCommandToStrLookup(DomeServerCommandStr);
 }
 
-OperationResult DomeControllerClient::getHomePosition(controller::AltAzPos &pos, controller::DomeError &res)
+OperationResult DomeControllerClient::findHome(controller::DomeError &res)
 {
-    return this->executeCommand(DomeServerCommand::REQ_GET_HOME_POSITION, res, pos);
+    return this->executeCommand(DomeServerCommand::REQ_FIND_HOME, res);
 }
 
-OperationResult DomeControllerClient::setHomePosition(const controller::AltAzPos &pos,
-                                                      controller::DomeError &res)
+OperationResult DomeControllerClient::incTarget(int deg, controller::DomeError &res)
 {
-    RequestData request = this->prepareRequestData(pos);
-    return this->executeCommand(DomeServerCommand::REQ_SET_HOME_POSITION, request, res);
+    RequestData req_data = this->prepareRequestData(deg);
+    return this->executeCommand(DomeServerCommand::REQ_INC_TARGET, req_data, res);
 }
 
-OperationResult DomeControllerClient::openSerialPort(const std::string& serial_port, controller::DomeError &res)
+OperationResult DomeControllerClient::setTarget(int deg, controller::DomeError &res)
 {
-    RequestData request = this->prepareRequestData(serial_port);
-    return this->executeCommand(DomeServerCommand::REQ_OPEN_SERIAL_PORT, request, res);
+    RequestData req_data = this->prepareRequestData(deg);
+    return this->executeCommand(DomeServerCommand::REQ_SET_TARGET, req_data, res);
 }
 
+OperationResult DomeControllerClient::getPos(int &deg, controller::DomeError &res)
+{
+    return this->executeCommand(DomeServerCommand::REQ_GET_POS, res, deg);
+}
+
+OperationResult DomeControllerClient::getTarget(int &deg, controller::DomeError &res)
+{
+    return this->executeCommand(DomeServerCommand::REQ_GET_TARGET, res, deg);
+}
+
+OperationResult DomeControllerClient::setEnMovement(bool en, controller::DomeError &res)
+{
+    RequestData req_data = this->prepareRequestData(en);
+    return this->executeCommand(DomeServerCommand::REQ_EN_MOVEMENT, req_data, res);
+}
+
+OperationResult DomeControllerClient::stop(controller::DomeError &res)
+{
+    return this->executeCommand(DomeServerCommand::REQ_STOP, res);
+}
 
 }} // END NAMESPACES.
 // =====================================================================================================================

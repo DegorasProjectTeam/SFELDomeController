@@ -118,6 +118,13 @@ int main(int, char**)
         &dome_controller,
         &DomeController::setTarget);
 
+    dome_server.registerCbAndReqProcFunc<sfeldome::controller::GetTargetCallback,
+                                         sfeldome::controller::GetTargetCallbackInArgs,
+                                         sfeldome::controller::GetTargetCallbackOutArgs>(
+        DomeServerCommand::REQ_GET_TARGET,
+        &dome_controller,
+        &DomeController::getTarget);
+
     dome_server.registerCbAndReqProcFunc<sfeldome::controller::GetPosCallback,
                                          sfeldome::controller::GetPosCallbackInArgs,
                                          sfeldome::controller::GetPosCallbackOutArgs>(
@@ -131,6 +138,13 @@ int main(int, char**)
         DomeServerCommand::REQ_EN_MOVEMENT,
         &dome_controller,
         &DomeController::setEnMovement);
+
+    dome_server.registerCbAndReqProcFunc<sfeldome::controller::StopCallback,
+                                         sfeldome::controller::StopCallbackInArgs,
+                                         sfeldome::controller::StopCallbackOutArgs>(
+        DomeServerCommand::REQ_STOP,
+        &dome_controller,
+        &DomeController::stop);
 
 
     // -- OTHER FUNCTIONS

@@ -139,7 +139,8 @@ macro_setup_shared_lib("${LIB_CONTROLLER_NAME}" "${LIB_INCLUDES_DIR}" "${LIB_CON
                         ${SOURCES1} ${HEADERS} ${TEMPLTS} ${INL} ${ALIAS})
 
 # Link with LibZMQUtils and TODO SERIAL LIB.
-target_link_libraries(${LIB_CONTROLLER_NAME} PUBLIC LibZMQUtils::LibZMQUtils ${LIBSERIAL_LIBRARIES})
+target_link_libraries(${LIB_CONTROLLER_NAME} PUBLIC LibZMQUtils::LibZMQUtils)
+target_link_libraries(${LIB_CONTROLLER_NAME} PRIVATE ${LIBSERIAL_LIBRARIES})
 
 target_include_directories(${LIB_CONTROLLER_NAME} PUBLIC ${LIBSERIAL_INCLUDE_DIRS})
 
@@ -224,6 +225,7 @@ endif()
 macro_setup_launcher("${APP_SERVER}"
                      "${MODULES_GLOBAL_LIBS_OPTIMIZED}"
                      "${MODULES_GLOBAL_LIBS_DEBUG}"
+                     "${APP_SERVER_HEADERS}"
                      "${APP_SERVER_SOURCES}")
 
 # In mingw better do static linking of the libgcc, libwinpthread and libstd.
