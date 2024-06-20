@@ -160,6 +160,9 @@ endif()
 
 endif()
 
+# Installation process.
+macro_default_library_installation("${LIB_CONTROLLER_NAME}" "${LIB_INCLUDES_DIR}")
+
 add_definitions(-DLIBDOMECONTROLLER_LIBRARY)
 
 # ----------------------------------------------------------------------------------------------------------------------
@@ -168,8 +171,7 @@ add_definitions(-DLIBDOMECONTROLLER_LIBRARY)
 # Auxiliar interface library.
 set(LIB_INTERFACE_CONTROLLER_NAME "LibInterfaceController")
 add_library(${LIB_INTERFACE_CONTROLLER_NAME} INTERFACE)
-target_sources(${LIB_INTERFACE_CONTROLLER_NAME} INTERFACE ${CMAKE_SOURCE_DIR}/sources/${LIB_CONTROLLER_NAME}/dome_controller_data.cpp)
-target_include_directories(${LIB_INTERFACE_CONTROLLER_NAME} INTERFACE ${CMAKE_SOURCE_DIR}/includes)
+macro_default_interface_library_installation("${LIB_INTERFACE_CONTROLLER_NAME}" "${LIB_INCLUDES_DIR}")
 
 # ----------------------------------------------------------------------------------------------------------------------
 # LIBSFELDOMECLIENT LIBRARY SETUP
@@ -196,6 +198,9 @@ macro_link_libzmqutils_default(${LIB_CLIENT_NAME} PUBLIC)
 
 # Link with interface.
 target_link_libraries(${LIB_CLIENT_NAME} PUBLIC ${LIB_INTERFACE_CONTROLLER_NAME})
+
+# Installation process.
+macro_default_library_installation("${LIB_CLIENT_NAME}" "${LIB_INCLUDES_DIR}")
 
 # **********************************************************************************************************************
 # PRODUCT APPLICATIONS PART
