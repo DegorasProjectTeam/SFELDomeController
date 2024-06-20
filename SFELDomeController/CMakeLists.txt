@@ -72,7 +72,6 @@ set(LIB_CLIENT_VER 0.0.1)
 
 # Build target selector.
 # TODO
-set(BUILD_CONTROLLER TRUE)
 
 # Macros global configuration.
 macro_global_set_show_externals(FALSE)
@@ -115,12 +114,15 @@ macro_global_add_libs_folders("${LibZMQUtils_LOCATION_DIR}" "${LibZMQUtils_LOCAT
 # Add the LibZMQUtils to global link variable.
 macro_global_add_libs_auto(${LibZMQUtils_LOCATION})
 
+if (BUILD_CONTROLLER)
 # Find CxxSerial package.
 find_package(LibSerial REQUIRED)
+endif()
 
 # ----------------------------------------------------------------------------------------------------------------------
 # LIBSFELDOMECONTROLLER LIBRARY SETUP
 
+if (BUILD_CONTROLLER)
 # Get the headers, sources and template files.
 file(GLOB_RECURSE HEADERS ${CMAKE_SOURCE_DIR}/includes/${LIB_CONTROLLER_NAME}/*.h)
 file(GLOB_RECURSE TEMPLTS ${CMAKE_SOURCE_DIR}/includes/${LIB_CONTROLLER_NAME}/*.tpp)
@@ -154,8 +156,11 @@ if(MODULES_GLOBAL_SHOW_EXTERNALS)
     # CXXSerial
     target_sources(${LIB_CONTROLLER_NAME} PUBLIC ${LIBSERIAL_INCLUDES})
 
+endif()
 
 endif()
+
+add_definitions(-DLIBDOMECONTROLLER_LIBRARY)
 
 # ----------------------------------------------------------------------------------------------------------------------
 # LIBSFELDOMECONTROLLER INTERFACE LIBRARY
@@ -201,6 +206,7 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${APP_BUILD_FOLDER})
 # ----------------------------------------------------------------------------------------------------------------------
 # SFEL DOME CONTROLLER SERVER
 
+if (BUILD_CONTROLLER)
 # App config.
 set(APP_SERVER "SFELDomeControllerServerApp")
 
@@ -240,6 +246,8 @@ set(ext_libs_loc "${MODULES_GLOBAL_INSTALL_LIB_PATH}"
 # Install the launcher.
 macro_install_launcher("${APP_SERVER}"
                        "${MODULES_GLOBAL_INSTALL_BIN_PATH}")
+
+endif()
 
 
 # ----------------------------------------------------------------------------------------------------------------------

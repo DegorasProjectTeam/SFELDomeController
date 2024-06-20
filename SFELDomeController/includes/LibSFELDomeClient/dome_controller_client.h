@@ -17,6 +17,7 @@
 // =====================================================================================================================
 #include <LibSFELDomeController/dome_controller_data.h>
 #include <LibSFELDomeController/dome_controller_server_data.h>
+#include <LibSFELDomeController/sfeldomecontroller_global.h>
 // =====================================================================================================================
 
 // AMELAS NAMESPACES
@@ -25,7 +26,7 @@ namespace sfeldome{
 namespace communication{
 // =====================================================================================================================
 
-class DomeControllerClient : public zmqutils::reqrep::DebugCommandClientBase
+class LIBDOMECONTROLLER_EXPORT DomeControllerClient : public zmqutils::reqrep::DebugCommandClientBase
 {
 public:
 
