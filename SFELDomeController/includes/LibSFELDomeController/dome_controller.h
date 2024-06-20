@@ -36,7 +36,7 @@ class LIBDOMECONTROLLER_EXPORT DomeController
 {
 public:
 
-    DomeController();
+    DomeController(const std::string &serial_port);
 
     DomeError findHome();
     DomeError incTarget(int deg);

@@ -17,8 +17,8 @@ namespace controller{
 // =====================================================================================================================
 
 
-DomeController::DomeController() :
-    serial_("/dev/ttyS0")
+DomeController::DomeController(const std::string &serial_port) :
+    serial_(serial_port)
 {
     try
     {

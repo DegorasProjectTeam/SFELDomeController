@@ -59,7 +59,7 @@
  * WARNING This now is a simple example. This must be replaced by the real server program.
  *
  */
-int main(int, char**)
+int main(int argc, char**argv)
 {
 
     // MAIN SERVER APP
@@ -67,6 +67,11 @@ int main(int, char**)
     // AMELAS SERVER
     // ETC
     // WARNING: WINDOWS PROCESS MODE
+
+    std::string serial_port = "/dev/ttyACM0";
+
+    if (argc > 1)
+        serial_port = argv[1];
 
 
     // Nampesaces.
@@ -83,7 +88,7 @@ int main(int, char**)
     bool client_status_check = true;
 
     // Instantiate the Amelas controller.
-    DomeController dome_controller;
+    DomeController dome_controller(serial_port);
 
     // Instantiate the server.
     DomeControllerServer dome_server(port, "*", "DomeControllerServer", "1.1.1", "SFEL Dome Controller Server", true);
