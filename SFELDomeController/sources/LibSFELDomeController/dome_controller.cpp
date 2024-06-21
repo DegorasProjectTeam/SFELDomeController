@@ -18,14 +18,14 @@ namespace controller{
 
 
 DomeController::DomeController(const std::string &serial_port) :
-    serial_(serial_port)
+    serial_(serial_port, 115200)
 {
     try
     {
-        this->serial_.open();
-        this->serial_.close();
         serial::Timeout timeout = serial::Timeout::simpleTimeout(2000);
         this->serial_.setTimeout(timeout);
+        //this->serial_.open();
+        this->serial_.close();
     }
     catch(const std::exception& e)
     {
