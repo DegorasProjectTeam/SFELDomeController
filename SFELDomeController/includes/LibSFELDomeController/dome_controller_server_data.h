@@ -26,7 +26,7 @@ namespace communication{
 // WARNING: In our approach, the server commands must be always in order.
 enum class DomeServerCommand : zmqutils::reqrep::CommandType
 {
-    REQ_FIND_HOME = 31,
+    REQ_FIND_HOME = static_cast<int>(zmqutils::reqrep::ServerCommand::END_BASE_COMMANDS) + 1,
     REQ_INC_TARGET,
     REQ_SET_TARGET,
     REQ_GET_TARGET,

@@ -377,17 +377,17 @@ MACRO(macro_default_interface_library_installation lib_name lib_includes_dir)
                           "${MODULES_GLOBAL_INSTALL_LIB_PATH}"
                           "${MODULES_GLOBAL_INSTALL_SHARE_PATH}")
 
-        # Install the runtime artifacts.
-        macro_install_runtime_artifacts("${lib_name}"
-                                        "${MODULES_GLOBAL_MAIN_DEP_SET_NAME}"
-                                        "${MODULES_GLOBAL_INSTALL_BIN_PATH}")
+        # # Install the runtime artifacts.
+        # macro_install_runtime_artifacts("${lib_name}"
+        #                                 "${MODULES_GLOBAL_MAIN_DEP_SET_NAME}"
+        #                                 "${MODULES_GLOBAL_INSTALL_BIN_PATH}")
 
-        # Install external dependencies.
-        macro_install_runtime_deps("${lib_name}"
-                                   "${MODULES_GLOBAL_MAIN_DEP_SET_NAME}"
-                                   "${external_deps_search_dirs}"
-                                   "${MODULES_GLOBAL_INSTALL_BIN_PATH}"
-                                   "" "")
+        # # Install external dependencies.
+        # macro_install_runtime_deps("${lib_name}"
+        #                            "${MODULES_GLOBAL_MAIN_DEP_SET_NAME}"
+        #                            "${external_deps_search_dirs}"
+        #                            "${MODULES_GLOBAL_INSTALL_BIN_PATH}"
+        #                            "" "")
 
     elseif(OS_NAME STREQUAL "Linux/Unix")
 

@@ -140,11 +140,11 @@ source_group("Alias Files" FILES ${ALIAS})
 macro_setup_shared_lib("${LIB_CONTROLLER_NAME}" "${LIB_INCLUDES_DIR}" "${LIB_CONTROLLER_VER}"
                         ${SOURCES1} ${HEADERS} ${TEMPLTS} ${INL} ${ALIAS})
 
-# Link with LibZMQUtils and TODO SERIAL LIB.
 target_link_libraries(${LIB_CONTROLLER_NAME} PUBLIC LibZMQUtils::LibZMQUtils)
 target_link_libraries(${LIB_CONTROLLER_NAME} PRIVATE ${LIBSERIAL_LIBRARIES})
 
 target_include_directories(${LIB_CONTROLLER_NAME} PUBLIC ${LIBSERIAL_INCLUDE_DIRS})
+target_include_directories(${LIB_CONTROLLER_NAME} PUBLIC ${LibZMQUtils_INCLUDES})
 
 if(MODULES_GLOBAL_SHOW_EXTERNALS)
 
@@ -158,10 +158,12 @@ if(MODULES_GLOBAL_SHOW_EXTERNALS)
 
 endif()
 
+macro_default_library_installation("${LIB_CONTROLLER_NAME}" "${LIB_INCLUDES_DIR}")
+
 endif()
 
 # Installation process.
-macro_default_library_installation("${LIB_CONTROLLER_NAME}" "${LIB_INCLUDES_DIR}")
+
 
 add_definitions(-DLIBDOMECONTROLLER_LIBRARY)
 
@@ -170,8 +172,11 @@ add_definitions(-DLIBDOMECONTROLLER_LIBRARY)
 
 # Auxiliar interface library.
 set(LIB_INTERFACE_CONTROLLER_NAME "LibInterfaceController")
-add_library(${LIB_INTERFACE_CONTROLLER_NAME} INTERFACE)
-macro_default_interface_library_installation("${LIB_INTERFACE_CONTROLLER_NAME}" "${LIB_INCLUDES_DIR}")
+add_library(${LIB_INTERFACE_CONTROLLER_NAME} STATIC
+    ${CMAKE_SOURCE_DIR}/sources/${LIB_CONTROLLER_NAME}/dome_controller_data.cpp)
+
+target_include_directories(${LIB_INTERFACE_CONTROLLER_NAME} INTERFACE ${CMAKE_SOURCE_DIR}/includes)
+target_include_directories(${LIB_INTERFACE_CONTROLLER_NAME} PUBLIC ${LibZMQUtils_INCLUDES})
 
 # ----------------------------------------------------------------------------------------------------------------------
 # LIBSFELDOMECLIENT LIBRARY SETUP
@@ -197,7 +202,7 @@ macro_setup_shared_lib("${LIB_CLIENT_NAME}" "${LIB_INCLUDES_DIR}" "${LIB_CLIENT_
 macro_link_libzmqutils_default(${LIB_CLIENT_NAME} PUBLIC)
 
 # Link with interface.
-target_link_libraries(${LIB_CLIENT_NAME} PUBLIC ${LIB_INTERFACE_CONTROLLER_NAME})
+target_link_libraries(${LIB_CLIENT_NAME} PRIVATE ${LIB_INTERFACE_CONTROLLER_NAME})
 
 # Installation process.
 macro_default_library_installation("${LIB_CLIENT_NAME}" "${LIB_INCLUDES_DIR}")
@@ -292,6 +297,8 @@ if (MINGW)
     target_link_libraries(${APP_CLIENT} PRIVATE -static-libgcc -static-libstdc++ -static -lpthread)
 endif()
 
+target_link_libraries(${APP_CLIENT} PRIVATE ${LIB_INTERFACE_CONTROLLER_NAME})
+
 # Prepare the external library search folders.
 set(ext_libs_loc "${MODULES_GLOBAL_INSTALL_LIB_PATH}"
                  "${MODULES_GLOBAL_INSTALL_BIN_PATH}")
@@ -308,9 +315,9 @@ macro_install_launcher("${APP_CLIENT}"
 # Configure the compilers.
 if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
     if (CMAKE_BUILD_TYPE STREQUAL "Debug")
-        set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -Wpedantic -Wall -Wextra -O0 -fopenmp")
+        set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -Wpedantic -Wall -Wextra -O0 -fopenmp -static-libgcc -static-libstdc++ -static -lpthread")
     else()
-        set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -pedantic -Wall -Wextra -O3 -pthread -fopenmp")
+        set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -pedantic -Wall -Wextra -O3 -pthread -fopenmp -static-libgcc -static-libstdc++ -static -lpthread")
     endif()
 else()
     message(FATAL_ERROR "Compiler not supported by default.")

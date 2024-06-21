@@ -109,7 +109,7 @@ int main(int argc, char** argv)
     console_cfg.configureConsole(true, false, true);
 
     // Client configuration variables.
-    std::string server_endpoint = "tcp://192.168.209.51:9999";    // Server endpoint.
+    std::string server_endpoint = "tcp://192.168.3.142:9999";    // Server endpoint.
     std::string client_iface = "";                                // Client network interface.
     std::string client_name = "SFELDomeCommandLineClient";          // Client name.
     std::string client_version = "1.1.2";                         // Client version.
