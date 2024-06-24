@@ -42,8 +42,7 @@ enum class DomeOperationResult : zmqutils::reqrep::ResultType
 {};
 
 // Extend the base command strings with those of the subclass.
-static constexpr auto DomeServerCommandStr = zmqutils::utils::joinArraysConstexpr(
-zmqutils::reqrep::ServerCommandStr, std::array<const char*, 9>
+static constexpr auto DomeServerCommandStr = std::array<const char*, 9>
 {
     "REQ_FIND_HOME",
     "REQ_INC_TARGET",
@@ -54,13 +53,10 @@ zmqutils::reqrep::ServerCommandStr, std::array<const char*, 9>
     "REQ_STOP",
     "END_IMPL_COMMANDS",
     "END_DOME_COMMANDS"
-});
+};
 
 // Extend the base result strings with those of the subclass.
-static constexpr auto DomeOperationResultStr = zmqutils::utils::joinArraysConstexpr(
-zmqutils::reqrep::OperationResultStr, std::array<const char*, 2>
-{
-});
+static constexpr auto DomeOperationResultStr = std::array<const char*, 0>{};
 
 // Usefull const expressions.
 constexpr std::int32_t kMinCmdId = static_cast<std::int32_t>(zmqutils::reqrep::ServerCommand::END_BASE_COMMANDS) + 1;

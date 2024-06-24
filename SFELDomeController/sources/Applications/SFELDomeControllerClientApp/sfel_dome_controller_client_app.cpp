@@ -108,8 +108,23 @@ int main(int argc, char** argv)
     zmqutils::utils::ConsoleConfig& console_cfg = zmqutils::utils::ConsoleConfig::getInstance();
     console_cfg.configureConsole(true, false, true);
 
+    std::string ip = "127.0.0.1";
+    int port = 9000;
+
+    if (argc > 1)
+    {
+
+        ip = argv[1];
+
+        if (argc > 2)
+            try
+            {
+                port = std::stoi(argv[2]);
+            } catch (...)  {}
+    }
+
     // Client configuration variables.
-    std::string server_endpoint = "tcp://192.168.3.142:9999";    // Server endpoint.
+    std::string server_endpoint = "tcp://" + ip +":" + std::to_string(port);    // Server endpoint.
     std::string client_iface = "";                                // Client network interface.
     std::string client_name = "SFELDomeCommandLineClient";          // Client name.
     std::string client_version = "1.1.2";                         // Client version.
@@ -117,15 +132,13 @@ int main(int argc, char** argv)
 
     // Other configurations.
     bool enable_alive_callbacks = false;                    // Disable or enable the alive callbacks.
-    std::chrono::milliseconds alive_timeout_ms = 2000ms;    // Timeout to consider a client dead.
-    std::chrono::milliseconds alive_period_ms = 1000ms;     // Timeout to consider a client dead.
+    std::chrono::milliseconds alive_timeout_ms = 5000ms;    // Timeout to consider a client dead.
+    std::chrono::milliseconds alive_period_ms = 1000ms;     // Period for auto sending alive message.
 
-    // Get the server endpoint as argument parameter.
-    if (argc > 1)
-        server_endpoint = argv[1];
 
     // Instantiate the client.
     DomeControllerClient dome_client(server_endpoint, client_iface, client_name, client_version, client_info);
+
 
     // Prepare the auxiliar parser.
     SFELDomeClientParser client_parser(dome_client);

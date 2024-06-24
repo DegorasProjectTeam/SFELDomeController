@@ -84,7 +84,7 @@ int main(int argc, char**argv)
     console_cfg.configureConsole(true, true, true);
 
     // Configuration variables.
-    unsigned port = 9999;
+    unsigned port = 9000;
     bool client_status_check = true;
 
     // Instantiate the Amelas controller.
