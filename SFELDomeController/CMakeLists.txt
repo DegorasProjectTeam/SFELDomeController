@@ -315,9 +315,9 @@ macro_install_launcher("${APP_CLIENT}"
 # Configure the compilers.
 if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
     if (CMAKE_BUILD_TYPE STREQUAL "Debug")
-        set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -Wpedantic -Wall -Wextra -O0 -fopenmp -static-libgcc -static-libstdc++ -static -lpthread")
+        set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -Wpedantic -Wall -Wextra -O0 -fopenmp -static-libgcc -static-libstdc++ -lpthread")
     else()
-        set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -pedantic -Wall -Wextra -O3 -pthread -fopenmp -static-libgcc -static-libstdc++ -static -lpthread")
+	set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -pedantic -Wall -Wextra -O3 -pthread -fopenmp -static-libgcc -static-libstdc++ -lpthread -fPIC")
     endif()
 else()
     message(FATAL_ERROR "Compiler not supported by default.")
