@@ -24,7 +24,6 @@ DomeController::DomeController(const std::string &serial_port) :
     {
         serial::Timeout timeout = serial::Timeout::simpleTimeout(2000);
         this->serial_.setTimeout(timeout);
-        //this->serial_.open();
         this->serial_.close();
     }
     catch(const std::exception& e)
@@ -117,7 +116,6 @@ DomeError DomeController::sendCommand(const std::string &command, const std::vec
             full_command += " " + param;
         }
         this->serial_.write(full_command);
-        this->serial_.close();
         bool available = this->serial_.waitReadable();
         if (available)
         {
@@ -135,7 +133,10 @@ DomeError DomeController::sendCommand(const std::string &command, const std::vec
     catch (const std::exception &e)
     {
         std::cerr << "Error at command execution. Reason: " << e.what() << std::endl;
+        this->serial_.close();
     }
+
+    this->serial_.close();
 
     return result;
 }
