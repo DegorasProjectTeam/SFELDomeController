@@ -85,6 +85,8 @@ macro_setup_base_project(${PROJ_NAME} ${PROJ_VER} ${PROJ_BUILD_MODE} ${PROJ_LANG
 
 # Other configurations.
 set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_SHARED_LIBRARY_PREFIX "")
+set(CMAKE_STATIC_LIBRARY_PREFIX "")
 
 # Setup the install directory for each compiler and operating system.
 macro_setup_default_install_dir(${PROJ_INSTALL_DIR})
@@ -122,12 +124,13 @@ endif()
 # ----------------------------------------------------------------------------------------------------------------------
 # LIBSFELDOMECONTROLLER LIBRARY SETUP
 
-if (BUILD_CONTROLLER)
 # Get the headers, sources and template files.
 file(GLOB_RECURSE HEADERS ${CMAKE_SOURCE_DIR}/includes/${LIB_CONTROLLER_NAME}/*.h)
 file(GLOB_RECURSE TEMPLTS ${CMAKE_SOURCE_DIR}/includes/${LIB_CONTROLLER_NAME}/*.tpp)
 file(GLOB_RECURSE INL ${CMAKE_SOURCE_DIR}/includes/${LIB_CONTROLLER_NAME}/*.inl)
 file(GLOB_RECURSE SOURCES1 ${CMAKE_SOURCE_DIR}/sources/${LIB_CONTROLLER_NAME}/*.cpp)
+
+if (BUILD_CONTROLLER)
 
 # Module alias files.
 macro_get_files_without_extension(ALIAS ${CMAKE_SOURCE_DIR}/includes/${LIB_CONTROLLER_NAME}/*)
@@ -173,7 +176,8 @@ add_definitions(-DLIBDOMECONTROLLER_LIBRARY)
 # Auxiliar interface library.
 set(LIB_INTERFACE_CONTROLLER_NAME "LibInterfaceController")
 add_library(${LIB_INTERFACE_CONTROLLER_NAME} STATIC
-    ${CMAKE_SOURCE_DIR}/sources/${LIB_CONTROLLER_NAME}/dome_controller_data.cpp)
+    ${CMAKE_SOURCE_DIR}/sources/${LIB_CONTROLLER_NAME}/dome_controller_data.cpp
+    ${CMAKE_SOURCE_DIR}/includes/${LIB_CONTROLLER_NAME}/dome_controller_data.h )
 
 target_include_directories(${LIB_INTERFACE_CONTROLLER_NAME} INTERFACE ${CMAKE_SOURCE_DIR}/includes)
 target_include_directories(${LIB_INTERFACE_CONTROLLER_NAME} PUBLIC ${LibZMQUtils_INCLUDES})
@@ -246,7 +250,7 @@ macro_setup_launcher("${APP_SERVER}"
 
 # In mingw better do static linking of the libgcc, libwinpthread and libstd.
 if (MINGW)
-    target_link_libraries(${APP_SERVER} PRIVATE -static-libgcc -static-libstdc++ -static -lpthread)
+    set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -static-libgcc -static-libstdc++ -static -lpthread")
 endif()
 
 # Prepare the external library search folders.
@@ -294,7 +298,7 @@ macro_setup_launcher("${APP_CLIENT}"
 
 # In mingw better do static linking of the libgcc, libwinpthread and libstd.
 if (MINGW)
-    target_link_libraries(${APP_CLIENT} PRIVATE -static-libgcc -static-libstdc++ -static -lpthread)
+    set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -static-libgcc -static-libstdc++ -static -lpthread")
 endif()
 
 target_link_libraries(${APP_CLIENT} PRIVATE ${LIB_INTERFACE_CONTROLLER_NAME})
@@ -315,9 +319,9 @@ macro_install_launcher("${APP_CLIENT}"
 # Configure the compilers.
 if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
     if (CMAKE_BUILD_TYPE STREQUAL "Debug")
-        set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -Wpedantic -Wall -Wextra -O0 -fopenmp -static-libgcc -static-libstdc++ -lpthread")
+        set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -Wpedantic -Wall -Wextra -O0 -fopenmp -fPIC")
     else()
-	set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -pedantic -Wall -Wextra -O3 -pthread -fopenmp -static-libgcc -static-libstdc++ -lpthread -fPIC")
+        set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -pedantic -Wall -Wextra -O3 -fopenmp -fPIC")
     endif()
 else()
     message(FATAL_ERROR "Compiler not supported by default.")
