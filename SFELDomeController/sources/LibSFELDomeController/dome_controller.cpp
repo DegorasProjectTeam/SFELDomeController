@@ -116,6 +116,7 @@ DomeError DomeController::sendCommand(const std::string &command, const std::vec
         {
             full_command += " " + param;
         }
+        full_command += "\n";
         this->serial_.write(full_command);
         bool available = this->serial_.waitReadable();
         if (available)
@@ -123,14 +124,37 @@ DomeError DomeController::sendCommand(const std::string &command, const std::vec
             std::string answer = this->serial_.readline();
             std::cout << "Received answer from serial: " << answer << std::endl;
             char *tok = std::strtok(answer.data(), " ");
+            std::vector<std::string> response_tokens;
             while(tok)
             {
-                params_out.push_back(tok);
+                response_tokens.push_back(tok);
                 tok = std::strtok(nullptr, " ");
             }
 
-            result = DomeError::SUCCESS;
+            if (response_tokens.size() > 1)
+            {
+                if (response_tokens[0] == "R" && response_tokens[1] == command)
+                {
+                    result = DomeError::SUCCESS;
+                    params_out = {std::make_move_iterator(response_tokens.begin() + 2),
+                                  std::make_move_iterator(response_tokens.end())};
+                }
+                else if (response_tokens[0] == "E")
+                {
+                    if (response_tokens[1] == "0")
+                        result = DomeError::ERROR_INVALID_COMMAND;
+                    else if (response_tokens[1] == "1")
+                        result = DomeError::ERROR_DISABLED_MOVE;
+                    else if (response_tokens[1] == "2")
+                        result = DomeError::ERROR_NOT_REAL_POS;
+                }
+                else if (response_tokens[0] == "W" && response_tokens[1] == "1")
+                {
+                    result = DomeError::WARNING_NOT_REAL_POS;
+                }
+            }
         }
+
     }
     catch (const std::exception &e)
     {

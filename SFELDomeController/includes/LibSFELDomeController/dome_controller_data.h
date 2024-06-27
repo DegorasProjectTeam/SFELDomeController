@@ -37,7 +37,11 @@ enum class DomeError : std::int32_t
 {
     INVALID_ERROR = -1,
     SUCCESS = 0,
-    CONTROLLER_COMM_ERROR = 1
+    CONTROLLER_COMM_ERROR = 1,
+    WARNING_NOT_REAL_POS = 2,
+    ERROR_NOT_REAL_POS = 3,
+    ERROR_INVALID_COMMAND = 4,
+    ERROR_DISABLED_MOVE = 5
 };
 
 static constexpr std::array<const char*, 2>  ControllerErrorStr
