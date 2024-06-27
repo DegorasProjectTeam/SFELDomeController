@@ -110,6 +110,7 @@ DomeError DomeController::sendCommand(const std::string &command, const std::vec
     try
     {
         this->serial_.open();
+        this->serial_.flush();
         std::string full_command = command;
         for (const auto& param : params_in)
         {
@@ -120,6 +121,7 @@ DomeError DomeController::sendCommand(const std::string &command, const std::vec
         if (available)
         {
             std::string answer = this->serial_.readline();
+            std::cout << "Received answer from serial: " << answer << std::endl;
             char *tok = std::strtok(answer.data(), " ");
             while(tok)
             {
